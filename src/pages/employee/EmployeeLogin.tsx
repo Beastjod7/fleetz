@@ -32,15 +32,19 @@ const EmployeeLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-secondary/10 to-primary/10">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Employee Portal</CardTitle>
-          <CardDescription>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-hero relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,hsl(var(--secondary)/0.15),transparent_50%)]"></div>
+      <div className="absolute bottom-1/3 left-1/4 w-40 h-40 bg-secondary/10 rounded-full blur-3xl"></div>
+      
+      <Card className="w-full max-w-md relative z-10 border-secondary/20 shadow-secondary/10">
+        <CardHeader className="text-center relative">
+          <div className="absolute inset-0 bg-gradient-secondary opacity-5 rounded-t-xl"></div>
+          <CardTitle className="text-3xl font-bold bg-gradient-secondary bg-clip-text text-transparent relative z-10">Employee Portal</CardTitle>
+          <CardDescription className="text-lg relative z-10">
             Sign in to access your trips and assignments
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="relative z-10">
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -64,7 +68,7 @@ const EmployeeLogin = () => {
                 required
               />
             </div>
-            <Button type="submit" className="w-full">
+            <Button type="submit" variant="secondary" className="w-full text-lg py-6" size="lg">
               Sign In
             </Button>
           </form>

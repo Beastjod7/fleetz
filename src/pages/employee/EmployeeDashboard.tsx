@@ -55,15 +55,15 @@ const EmployeeDashboard = () => {
   ];
 
   const stats = [
-    { title: "Trips Today", value: "2", icon: MapPin },
-    { title: "Completed", value: "1", icon: CheckCircle },
-    { title: "Hours Driven", value: "3.2", icon: Clock },
+    { title: "Trips Today", value: "2", icon: MapPin, color: "text-primary", bgColor: "bg-primary/10" },
+    { title: "Completed", value: "1", icon: CheckCircle, color: "text-success", bgColor: "bg-success/10" },
+    { title: "Hours Driven", value: "3.2", icon: Clock, color: "text-warning", bgColor: "bg-warning/10" },
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-hero">
       {/* Header */}
-      <header className="border-b bg-card">
+      <header className="border-b bg-gradient-card backdrop-blur-lg border-border/50">
         <div className="flex h-16 items-center px-4 md:px-6">
           <div className="flex items-center space-x-4">
             <Avatar>
@@ -88,18 +88,20 @@ const EmployeeDashboard = () => {
 
       <div className="p-4 md:p-6 space-y-6">
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {stats.map((stat) => (
-            <Card key={stat.title}>
+            <Card key={stat.title} className="hover:scale-105 transition-all duration-300">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">
                       {stat.title}
                     </p>
-                    <p className="text-2xl font-bold">{stat.value}</p>
+                    <p className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">{stat.value}</p>
                   </div>
-                  <stat.icon className="h-8 w-8 text-primary" />
+                  <div className={`p-3 rounded-xl ${stat.bgColor}`}>
+                    <stat.icon className={`h-8 w-8 ${stat.color}`} />
+                  </div>
                 </div>
               </CardContent>
             </Card>

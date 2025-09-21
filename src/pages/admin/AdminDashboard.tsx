@@ -19,10 +19,10 @@ const AdminDashboard = () => {
   };
 
   const stats = [
-    { title: "Total Vehicles", value: "24", icon: Car, color: "text-blue-600" },
-    { title: "Active Employees", value: "18", icon: Users, color: "text-green-600" },
-    { title: "Active Trips", value: "7", icon: MapPin, color: "text-orange-600" },
-    { title: "Completed Today", value: "12", icon: Activity, color: "text-purple-600" },
+    { title: "Total Vehicles", value: "24", icon: Car, color: "text-primary", bgColor: "bg-primary/10" },
+    { title: "Active Employees", value: "18", icon: Users, color: "text-secondary", bgColor: "bg-secondary/10" },
+    { title: "Active Trips", value: "7", icon: MapPin, color: "text-warning", bgColor: "bg-warning/10" },
+    { title: "Completed Today", value: "12", icon: Activity, color: "text-success", bgColor: "bg-success/10" },
   ];
 
   const recentTrips = [
@@ -32,9 +32,9 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-hero">
       {/* Header */}
-      <header className="border-b bg-card">
+      <header className="border-b bg-gradient-card backdrop-blur-lg border-border/50">
         <div className="flex h-16 items-center px-4 md:px-6">
           <h1 className="text-xl font-semibold">Fleet Management - Admin</h1>
           <div className="ml-auto flex items-center space-x-4">
@@ -48,18 +48,20 @@ const AdminDashboard = () => {
 
       <div className="p-4 md:p-6 space-y-6">
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat) => (
-            <Card key={stat.title}>
+            <Card key={stat.title} className="hover:scale-105 transition-all duration-300">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">
                       {stat.title}
                     </p>
-                    <p className="text-2xl font-bold">{stat.value}</p>
+                    <p className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">{stat.value}</p>
                   </div>
-                  <stat.icon className={`h-8 w-8 ${stat.color}`} />
+                  <div className={`p-3 rounded-xl ${stat.bgColor}`}>
+                    <stat.icon className={`h-8 w-8 ${stat.color}`} />
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -67,29 +69,29 @@ const AdminDashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <Card>
+        <Card className="border-primary/20">
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-2xl">Quick Actions</CardTitle>
+            <CardDescription className="text-lg">
               Manage your fleet operations efficiently
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Button className="h-20 flex-col space-y-2">
-                <Plus className="h-5 w-5" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Button className="h-24 flex-col space-y-3 text-lg">
+                <Plus className="h-6 w-6" />
                 <span>Create Trip</span>
               </Button>
-              <Button variant="outline" className="h-20 flex-col space-y-2">
-                <Users className="h-5 w-5" />
+              <Button variant="outline" className="h-24 flex-col space-y-3 text-lg hover:bg-secondary/10 hover:border-secondary/40">
+                <Users className="h-6 w-6" />
                 <span>Manage Employees</span>
               </Button>
-              <Button variant="outline" className="h-20 flex-col space-y-2">
-                <Car className="h-5 w-5" />
+              <Button variant="outline" className="h-24 flex-col space-y-3 text-lg hover:bg-warning/10 hover:border-warning/40">
+                <Car className="h-6 w-6" />
                 <span>Manage Vehicles</span>
               </Button>
-              <Button variant="outline" className="h-20 flex-col space-y-2">
-                <MapPin className="h-5 w-5" />
+              <Button variant="outline" className="h-24 flex-col space-y-3 text-lg hover:bg-success/10 hover:border-success/40">
+                <MapPin className="h-6 w-6" />
                 <span>Manage Routes</span>
               </Button>
             </div>
@@ -97,18 +99,18 @@ const AdminDashboard = () => {
         </Card>
 
         {/* Recent Trips */}
-        <Card>
+        <Card className="border-secondary/20">
           <CardHeader>
-            <CardTitle>Recent Trips</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-2xl">Recent Trips</CardTitle>
+            <CardDescription className="text-lg">
               Latest trip activities and status updates
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="space-y-6">
               {recentTrips.map((trip) => (
-                <div key={trip.id} className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center space-x-4">
+                <div key={trip.id} className="flex items-center justify-between p-6 border rounded-xl bg-gradient-card hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center space-x-6">
                     <div>
                       <p className="font-medium">{trip.id}</p>
                       <p className="text-sm text-muted-foreground">{trip.driver}</p>

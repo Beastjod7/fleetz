@@ -7,8 +7,13 @@ const Index = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-secondary/5">
-      <div className="text-center space-y-8 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-hero relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.1),transparent_50%)] animate-pulse"></div>
+      <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/20 rounded-full blur-3xl animate-bounce"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-24 h-24 bg-secondary/20 rounded-full blur-2xl animate-pulse"></div>
+      
+      <div className="text-center space-y-8 p-6 relative z-10">
         <div>
           <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             Fleet Management System
@@ -18,42 +23,46 @@ const Index = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/admin/login")}>
-            <CardHeader className="text-center">
-              <Shield className="h-12 w-12 mx-auto text-primary mb-4" />
-              <CardTitle className="text-2xl">Admin Portal</CardTitle>
-              <CardDescription>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <Card className="cursor-pointer hover:shadow-primary/20 hover:border-primary/30 transition-all duration-500 group transform hover:scale-105 bg-gradient-to-br from-card via-card/90 to-primary/5" onClick={() => navigate("/admin/login")}>
+            <CardHeader className="text-center relative">
+              <div className="absolute inset-0 bg-gradient-primary opacity-5 rounded-t-xl"></div>
+              <Shield className="h-16 w-16 mx-auto text-primary mb-6 group-hover:text-primary-glow transition-colors duration-300 relative z-10" />
+              <CardTitle className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent relative z-10">Admin Portal</CardTitle>
+              <CardDescription className="text-lg leading-relaxed relative z-10">
                 Manage trips, vehicles, employees, and routes. Full administrative control over fleet operations.
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <Button className="w-full" size="lg">
+            <CardContent className="relative z-10">
+              <Button className="w-full text-lg py-6" size="lg" variant="default">
                 Access Admin Portal
               </Button>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/employee/login")}>
-            <CardHeader className="text-center">
-              <Users className="h-12 w-12 mx-auto text-secondary mb-4" />
-              <CardTitle className="text-2xl">Employee Portal</CardTitle>
-              <CardDescription>
+          <Card className="cursor-pointer hover:shadow-secondary/20 hover:border-secondary/30 transition-all duration-500 group transform hover:scale-105 bg-gradient-to-br from-card via-card/90 to-secondary/5" onClick={() => navigate("/employee/login")}>
+            <CardHeader className="text-center relative">
+              <div className="absolute inset-0 bg-gradient-secondary opacity-5 rounded-t-xl"></div>
+              <Users className="h-16 w-16 mx-auto text-secondary mb-6 group-hover:text-secondary-glow transition-colors duration-300 relative z-10" />
+              <CardTitle className="text-3xl font-bold bg-gradient-secondary bg-clip-text text-transparent relative z-10">Employee Portal</CardTitle>
+              <CardDescription className="text-lg leading-relaxed relative z-10">
                 View assigned trips, update trip status, manage your profile, and submit trip logs.
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <Button variant="secondary" className="w-full" size="lg">
+            <CardContent className="relative z-10">
+              <Button variant="secondary" className="w-full text-lg py-6" size="lg">
                 Access Employee Portal
               </Button>
             </CardContent>
           </Card>
         </div>
 
-        <div className="text-sm text-muted-foreground">
-          <p>Demo Credentials:</p>
-          <p>Admin: admin@fleet.com / admin123</p>
-          <p>Employee: employee@fleet.com / emp123</p>
+        <div className="text-sm text-muted-foreground bg-card/50 backdrop-blur-sm rounded-xl p-6 border border-border/50 shadow-elegant">
+          <p className="font-semibold text-foreground mb-2">Demo Credentials:</p>
+          <div className="space-y-1">
+            <p><span className="font-medium text-primary">Admin:</span> admin@fleet.com / admin123</p>
+            <p><span className="font-medium text-secondary">Employee:</span> employee@fleet.com / emp123</p>
+          </div>
         </div>
       </div>
     </div>
