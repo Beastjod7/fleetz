@@ -12,6 +12,8 @@ import {
   LogOut,
   Bell
 } from "lucide-react";
+import LiveMap from "@/components/LiveMap";
+import LiveUpdates from "@/components/LiveUpdates";
 
 const EmployeeDashboard = () => {
   const navigate = useNavigate();
@@ -106,6 +108,16 @@ const EmployeeDashboard = () => {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        {/* Live Tracking Section */}
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <LiveMap employeeId="emp001" />
+          </div>
+          <div>
+            <LiveUpdates employeeId="emp001" />
+          </div>
         </div>
 
         {/* Assigned Trips */}

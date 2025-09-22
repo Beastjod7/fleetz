@@ -10,6 +10,8 @@ import {
   Plus,
   LogOut
 } from "lucide-react";
+import LiveMap from "@/components/LiveMap";
+import LiveUpdates from "@/components/LiveUpdates";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -66,6 +68,16 @@ const AdminDashboard = () => {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        {/* Live Tracking Section */}
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <LiveMap isAdmin={true} />
+          </div>
+          <div>
+            <LiveUpdates isAdmin={true} />
+          </div>
         </div>
 
         {/* Quick Actions */}
