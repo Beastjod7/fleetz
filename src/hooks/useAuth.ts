@@ -38,25 +38,27 @@ export function useAuth() {
         data: {
           first_name: firstName,
           last_name: lastName,
+          role: role // Store role in metadata for later assignment
         }
       }
     });
 
-    if (data.user && !error) {
-      // Add role to user_roles table
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: data.user.id,
-          role: role
-        });
-      
-      if (roleError) {
-        console.error('Error assigning role:', roleError);
-      }
-    }
-
     return { data, error };
+  };
+
+  const assignUserRole = async (userId: string, role: 'admin' | 'employee') => {
+    const { error } = await supabase
+      .from('user_roles')
+      .insert({
+        user_id: userId,
+        role: role
+      });
+    
+    if (error) {
+      console.error('Error assigning role:', error);
+    }
+    
+    return { error };
   };
 
   const signIn = async (email: string, password: string) => {
