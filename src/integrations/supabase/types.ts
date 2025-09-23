@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          title: string
+          trip_id: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          title: string
+          trip_id?: string | null
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          title?: string
+          trip_id?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -47,6 +95,125 @@ export type Database = {
         }
         Relationships: []
       }
+      routes: {
+        Row: {
+          created_at: string
+          distance_km: number | null
+          end_location: string
+          estimated_duration_minutes: number | null
+          id: string
+          is_active: boolean
+          name: string
+          start_location: string
+          updated_at: string
+          waypoints: Json | null
+        }
+        Insert: {
+          created_at?: string
+          distance_km?: number | null
+          end_location: string
+          estimated_duration_minutes?: number | null
+          id?: string
+          is_active?: boolean
+          name: string
+          start_location: string
+          updated_at?: string
+          waypoints?: Json | null
+        }
+        Update: {
+          created_at?: string
+          distance_km?: number | null
+          end_location?: string
+          estimated_duration_minutes?: number | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          start_location?: string
+          updated_at?: string
+          waypoints?: Json | null
+        }
+        Relationships: []
+      }
+      trips: {
+        Row: {
+          actual_end_time: string | null
+          actual_start_time: string | null
+          assigned_by_admin_id: string
+          assigned_employee_id: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          route_id: string
+          scheduled_end_time: string
+          scheduled_start_time: string
+          status: Database["public"]["Enums"]["trip_status"]
+          trip_log: string | null
+          updated_at: string
+          vehicle_id: string
+        }
+        Insert: {
+          actual_end_time?: string | null
+          actual_start_time?: string | null
+          assigned_by_admin_id: string
+          assigned_employee_id?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          route_id: string
+          scheduled_end_time: string
+          scheduled_start_time: string
+          status?: Database["public"]["Enums"]["trip_status"]
+          trip_log?: string | null
+          updated_at?: string
+          vehicle_id: string
+        }
+        Update: {
+          actual_end_time?: string | null
+          actual_start_time?: string | null
+          assigned_by_admin_id?: string
+          assigned_employee_id?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          route_id?: string
+          scheduled_end_time?: string
+          scheduled_start_time?: string
+          status?: Database["public"]["Enums"]["trip_status"]
+          trip_log?: string | null
+          updated_at?: string
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trips_assigned_by_admin_id_fkey"
+            columns: ["assigned_by_admin_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "trips_assigned_employee_id_fkey"
+            columns: ["assigned_employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "trips_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "routes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trips_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -68,6 +235,54 @@ export type Database = {
         }
         Relationships: []
       }
+      vehicles: {
+        Row: {
+          capacity: number
+          created_at: string
+          fuel_type: string | null
+          id: string
+          last_maintenance_date: string | null
+          license_plate: string
+          make: string
+          mileage: number | null
+          model: string
+          notes: string | null
+          status: Database["public"]["Enums"]["vehicle_status"]
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          capacity: number
+          created_at?: string
+          fuel_type?: string | null
+          id?: string
+          last_maintenance_date?: string | null
+          license_plate: string
+          make: string
+          mileage?: number | null
+          model: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["vehicle_status"]
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          capacity?: number
+          created_at?: string
+          fuel_type?: string | null
+          id?: string
+          last_maintenance_date?: string | null
+          license_plate?: string
+          make?: string
+          mileage?: number | null
+          model?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["vehicle_status"]
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -83,6 +298,13 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "employee"
+      trip_status:
+        | "pending"
+        | "in_progress"
+        | "completed"
+        | "cancelled"
+        | "delayed"
+      vehicle_status: "available" | "in_use" | "maintenance" | "out_of_service"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -211,6 +433,14 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "employee"],
+      trip_status: [
+        "pending",
+        "in_progress",
+        "completed",
+        "cancelled",
+        "delayed",
+      ],
+      vehicle_status: ["available", "in_use", "maintenance", "out_of_service"],
     },
   },
 } as const
