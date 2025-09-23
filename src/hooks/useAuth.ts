@@ -99,5 +99,6 @@ export function useAuth() {
     signIn,
     signOut,
     getUserRole,
+    assignUserRole,
   };
 }
