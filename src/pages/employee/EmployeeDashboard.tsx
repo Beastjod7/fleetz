@@ -57,9 +57,9 @@ const EmployeeDashboard = () => {
   ];
 
   const stats = [
-    { title: "Trips Today", value: "2", icon: MapPin, color: "text-primary", bgColor: "bg-primary/10" },
-    { title: "Completed", value: "1", icon: CheckCircle, color: "text-success", bgColor: "bg-success/10" },
-    { title: "Hours Driven", value: "3.2", icon: Clock, color: "text-warning", bgColor: "bg-warning/10" },
+    { title: "Trips Today", value: "2", icon: MapPin, color: "text-foreground", bgColor: "bg-muted/20" },
+    { title: "Completed", value: "1", icon: CheckCircle, color: "text-muted-foreground", bgColor: "bg-muted/30" },
+    { title: "Hours Driven", value: "3.2", icon: Clock, color: "text-foreground", bgColor: "bg-muted/25" },
   ];
 
   return (

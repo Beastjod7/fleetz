@@ -21,10 +21,10 @@ const AdminDashboard = () => {
   };
 
   const stats = [
-    { title: "Total Vehicles", value: "24", icon: Car, color: "text-primary", bgColor: "bg-primary/10", path: "/admin/vehicles" },
-    { title: "Active Employees", value: "18", icon: Users, color: "text-secondary", bgColor: "bg-secondary/10", path: "/admin/employees" },
-    { title: "Active Trips", value: "7", icon: MapPin, color: "text-warning", bgColor: "bg-warning/10", path: "/admin/trips" },
-    { title: "Completed Today", value: "12", icon: Activity, color: "text-success", bgColor: "bg-success/10", path: "/admin/trips" },
+    { title: "Total Vehicles", value: "24", icon: Car, color: "text-foreground", bgColor: "bg-muted/20", path: "/admin/vehicles" },
+    { title: "Active Employees", value: "18", icon: Users, color: "text-muted-foreground", bgColor: "bg-muted/30", path: "/admin/employees" },
+    { title: "Active Trips", value: "7", icon: MapPin, color: "text-foreground", bgColor: "bg-muted/25", path: "/admin/trips" },
+    { title: "Completed Today", value: "12", icon: Activity, color: "text-muted-foreground", bgColor: "bg-muted/35", path: "/admin/trips" },
   ];
 
   const recentTrips = [

@@ -15,7 +15,7 @@ const Index = () => {
       
       <div className="text-center space-y-8 p-6 relative z-10">
         <div>
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
             Fleet Management System
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -24,11 +24,11 @@ const Index = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          <Card className="cursor-pointer hover:shadow-primary/20 hover:border-primary/30 transition-all duration-500 group transform hover:scale-105 bg-gradient-to-br from-card via-card/90 to-primary/5" onClick={() => navigate("/admin/login")}>
+          <Card className="cursor-pointer hover:shadow-primary/20 hover:border-primary/30 transition-all duration-500 group transform hover:scale-105 bg-gradient-to-br from-card via-card/90 to-muted/20" onClick={() => navigate("/admin/login")}>
             <CardHeader className="text-center relative">
-              <div className="absolute inset-0 bg-gradient-primary opacity-5 rounded-t-xl"></div>
-              <Shield className="h-16 w-16 mx-auto text-primary mb-6 group-hover:text-primary-glow transition-colors duration-300 relative z-10" />
-              <CardTitle className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent relative z-10">Admin Portal</CardTitle>
+              <div className="absolute inset-0 bg-gradient-to-r from-foreground/5 to-muted/10 rounded-t-xl"></div>
+              <Shield className="h-16 w-16 mx-auto text-foreground mb-6 group-hover:text-muted-foreground transition-colors duration-300 relative z-10" />
+              <CardTitle className="text-3xl font-bold text-foreground relative z-10">Admin Portal</CardTitle>
               <CardDescription className="text-lg leading-relaxed relative z-10">
                 Manage trips, vehicles, employees, and routes. Full administrative control over fleet operations.
               </CardDescription>
@@ -40,11 +40,11 @@ const Index = () => {
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:shadow-secondary/20 hover:border-secondary/30 transition-all duration-500 group transform hover:scale-105 bg-gradient-to-br from-card via-card/90 to-secondary/5" onClick={() => navigate("/employee/login")}>
+          <Card className="cursor-pointer hover:shadow-secondary/20 hover:border-secondary/30 transition-all duration-500 group transform hover:scale-105 bg-gradient-to-br from-card via-card/90 to-muted/20" onClick={() => navigate("/employee/login")}>
             <CardHeader className="text-center relative">
-              <div className="absolute inset-0 bg-gradient-secondary opacity-5 rounded-t-xl"></div>
-              <Users className="h-16 w-16 mx-auto text-secondary mb-6 group-hover:text-secondary-glow transition-colors duration-300 relative z-10" />
-              <CardTitle className="text-3xl font-bold bg-gradient-secondary bg-clip-text text-transparent relative z-10">Employee Portal</CardTitle>
+              <div className="absolute inset-0 bg-gradient-to-r from-muted-foreground/5 to-muted/10 rounded-t-xl"></div>
+              <Users className="h-16 w-16 mx-auto text-muted-foreground mb-6 group-hover:text-foreground transition-colors duration-300 relative z-10" />
+              <CardTitle className="text-3xl font-bold text-muted-foreground relative z-10">Employee Portal</CardTitle>
               <CardDescription className="text-lg leading-relaxed relative z-10">
                 View assigned trips, update trip status, manage your profile, and submit trip logs.
               </CardDescription>
@@ -60,8 +60,8 @@ const Index = () => {
         <div className="text-sm text-muted-foreground bg-card/50 backdrop-blur-sm rounded-xl p-6 border border-border/50 shadow-elegant">
           <p className="font-semibold text-foreground mb-2">Demo Credentials:</p>
           <div className="space-y-1">
-            <p><span className="font-medium text-primary">Admin:</span> admin@fleet.com / admin123</p>
-            <p><span className="font-medium text-secondary">Employee:</span> employee@fleet.com / emp123</p>
+            <p><span className="font-medium text-foreground">Admin:</span> admin@fleet.com / admin123</p>
+            <p><span className="font-medium text-muted-foreground">Employee:</span> employee@fleet.com / emp123</p>
           </div>
         </div>
       </div>

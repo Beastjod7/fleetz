@@ -100,8 +100,8 @@ const EmployeeLogin = () => {
       
       <Card className="w-full max-w-md relative z-10 border-secondary/20 shadow-secondary/10">
         <CardHeader className="text-center relative">
-          <div className="absolute inset-0 bg-gradient-secondary opacity-5 rounded-t-xl"></div>
-          <CardTitle className="text-3xl font-bold bg-gradient-secondary bg-clip-text text-transparent relative z-10">Employee Portal</CardTitle>
+          <div className="absolute inset-0 bg-gradient-to-r from-muted-foreground/5 to-muted/10 rounded-t-xl"></div>
+          <CardTitle className="text-3xl font-bold text-muted-foreground relative z-10">Employee Portal</CardTitle>
           <CardDescription className="text-lg relative z-10">
             Sign in to access your trips and assignments
           </CardDescription>
@@ -200,8 +200,8 @@ const EmployeeLogin = () => {
           
           <div className="mt-4 text-center">
             <p className="text-sm text-muted-foreground">
-              Administrator? <span 
-                className="text-primary cursor-pointer hover:underline"
+              Administrator? <span
+                className="text-foreground cursor-pointer hover:underline"
                 onClick={() => navigate("/admin/login")}
               >
                 Sign in here
