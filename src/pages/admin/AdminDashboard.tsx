@@ -21,10 +21,10 @@ const AdminDashboard = () => {
   };
 
   const stats = [
-    { title: "Total Vehicles", value: "24", icon: Car, color: "text-primary", bgColor: "bg-primary/10" },
-    { title: "Active Employees", value: "18", icon: Users, color: "text-secondary", bgColor: "bg-secondary/10" },
-    { title: "Active Trips", value: "7", icon: MapPin, color: "text-warning", bgColor: "bg-warning/10" },
-    { title: "Completed Today", value: "12", icon: Activity, color: "text-success", bgColor: "bg-success/10" },
+    { title: "Total Vehicles", value: "24", icon: Car, color: "text-primary", bgColor: "bg-primary/10", path: "/admin/vehicles" },
+    { title: "Active Employees", value: "18", icon: Users, color: "text-secondary", bgColor: "bg-secondary/10", path: "/admin/employees" },
+    { title: "Active Trips", value: "7", icon: MapPin, color: "text-warning", bgColor: "bg-warning/10", path: "/admin/trips" },
+    { title: "Completed Today", value: "12", icon: Activity, color: "text-success", bgColor: "bg-success/10", path: "/admin/trips" },
   ];
 
   const recentTrips = [
@@ -52,7 +52,11 @@ const AdminDashboard = () => {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat) => (
-            <Card key={stat.title} className="hover:scale-105 transition-all duration-300">
+            <Card 
+              key={stat.title} 
+              className="hover:scale-105 transition-all duration-300 cursor-pointer"
+              onClick={() => navigate(stat.path)}
+            >
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
