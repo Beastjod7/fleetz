@@ -94,19 +94,34 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Button className="h-24 flex-col space-y-3 text-lg">
+              <Button 
+                className="h-24 flex-col space-y-3 text-lg"
+                onClick={() => navigate("/admin/create-trip")}
+              >
                 <Plus className="h-6 w-6" />
                 <span>Create Trip</span>
               </Button>
-              <Button variant="outline" className="h-24 flex-col space-y-3 text-lg hover:bg-secondary/10 hover:border-secondary/40">
+              <Button 
+                variant="outline" 
+                className="h-24 flex-col space-y-3 text-lg hover:bg-secondary/10 hover:border-secondary/40"
+                onClick={() => navigate("/admin/employees")}
+              >
                 <Users className="h-6 w-6" />
                 <span>Manage Employees</span>
               </Button>
-              <Button variant="outline" className="h-24 flex-col space-y-3 text-lg hover:bg-warning/10 hover:border-warning/40">
+              <Button 
+                variant="outline" 
+                className="h-24 flex-col space-y-3 text-lg hover:bg-warning/10 hover:border-warning/40"
+                onClick={() => navigate("/admin/manage-vehicles")}
+              >
                 <Car className="h-6 w-6" />
                 <span>Manage Vehicles</span>
               </Button>
-              <Button variant="outline" className="h-24 flex-col space-y-3 text-lg hover:bg-success/10 hover:border-success/40">
+              <Button 
+                variant="outline" 
+                className="h-24 flex-col space-y-3 text-lg hover:bg-success/10 hover:border-success/40"
+                onClick={() => navigate("/admin/manage-routes")}
+              >
                 <MapPin className="h-6 w-6" />
                 <span>Manage Routes</span>
               </Button>

@@ -10,6 +10,9 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import VehiclesPage from "./pages/admin/VehiclesPage";
 import EmployeesPage from "./pages/admin/EmployeesPage";
 import TripsPage from "./pages/admin/TripsPage";
+import CreateTripPage from "./pages/admin/CreateTripPage";
+import ManageVehiclesPage from "./pages/admin/ManageVehiclesPage";
+import ManageRoutesPage from "./pages/admin/ManageRoutesPage";
 import EmployeeLogin from "./pages/employee/EmployeeLogin";
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 
@@ -28,6 +31,9 @@ const App = () => (
           <Route path="/admin/vehicles" element={<VehiclesPage />} />
           <Route path="/admin/employees" element={<EmployeesPage />} />
           <Route path="/admin/trips" element={<TripsPage />} />
+          <Route path="/admin/create-trip" element={<CreateTripPage />} />
+          <Route path="/admin/manage-vehicles" element={<ManageVehiclesPage />} />
+          <Route path="/admin/manage-routes" element={<ManageRoutesPage />} />
           <Route path="/employee/login" element={<EmployeeLogin />} />
           <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
