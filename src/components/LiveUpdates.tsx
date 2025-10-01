@@ -3,6 +3,7 @@ import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Bell, MapPin, Clock, User, Truck } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Update {
   id: string;
@@ -18,66 +19,73 @@ interface LiveUpdatesProps {
 }
 
 const LiveUpdates: React.FC<LiveUpdatesProps> = ({ isAdmin = false, employeeId }) => {
-  const [updates, setUpdates] = useState<Update[]>([
-    {
-      id: '1',
-      type: 'trip_started',
-      message: 'Employee John Doe started trip to Downtown Office',
-      timestamp: new Date(Date.now() - 5 * 60000), // 5 minutes ago
-      isRead: false
-    },
-    {
-      id: '2',
-      type: 'location_update',
-      message: 'Vehicle 001 location updated - Broadway & 42nd St',
-      timestamp: new Date(Date.now() - 10 * 60000), // 10 minutes ago
-      isRead: false
-    },
-    {
-      id: '3',
-      type: 'trip_completed',
-      message: 'Trip #TR001 completed successfully',
-      timestamp: new Date(Date.now() - 15 * 60000), // 15 minutes ago
-      isRead: true
-    },
-    {
-      id: '4',
-      type: 'status_change',
-      message: 'Vehicle 002 status changed to maintenance',
-      timestamp: new Date(Date.now() - 30 * 60000), // 30 minutes ago
-      isRead: true
-    }
-  ]);
+  const [updates, setUpdates] = useState<Update[]>([]);
 
-  // Simulate real-time updates
   useEffect(() => {
-    const interval = setInterval(() => {
-      const newUpdate: Update = {
-        id: Date.now().toString(),
-        type: 'location_update',
-        message: `Vehicle ${Math.floor(Math.random() * 5) + 1} location updated`,
-        timestamp: new Date(),
-        isRead: false
-      };
-      
-      setUpdates(prev => [newUpdate, ...prev.slice(0, 9)]); // Keep only 10 latest
-    }, 30000); // Update every 30 seconds
+    fetchNotifications();
+  }, [isAdmin, employeeId]);
 
-    return () => clearInterval(interval);
-  }, []);
+  const fetchNotifications = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-  const markAsRead = (id: string) => {
-    setUpdates(prev => 
-      prev.map(update => 
-        update.id === id ? { ...update, isRead: true } : update
-      )
-    );
+      const { data: notifications } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (notifications) {
+        const formattedUpdates: Update[] = notifications.map(notif => ({
+          id: notif.id,
+          type: notif.type as any,
+          message: notif.message,
+          timestamp: new Date(notif.created_at),
+          isRead: notif.is_read
+        }));
+        setUpdates(formattedUpdates);
+      }
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
   };
 
-  const markAllAsRead = () => {
-    setUpdates(prev => 
-      prev.map(update => ({ ...update, isRead: true }))
-    );
+  const markAsRead = async (id: string) => {
+    try {
+      await supabase
+        .from('notifications')
+        .update({ is_read: true })
+        .eq('id', id);
+
+      setUpdates(prev => 
+        prev.map(update => 
+          update.id === id ? { ...update, isRead: true } : update
+        )
+      );
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  };
+
+  const markAllAsRead = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      await supabase
+        .from('notifications')
+        .update({ is_read: true })
+        .eq('user_id', user.id)
+        .eq('is_read', false);
+
+      setUpdates(prev => 
+        prev.map(update => ({ ...update, isRead: true }))
+      );
+    } catch (error) {
+      console.error('Error marking all notifications as read:', error);
+    }
   };
 
   const getUpdateIcon = (type: Update['type']) => {

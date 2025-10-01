@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,26 +13,96 @@ import {
 } from "lucide-react";
 import LiveMap from "@/components/LiveMap";
 import LiveUpdates from "@/components/LiveUpdates";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [stats, setStats] = useState([
+    { title: "Total Vehicles", value: "0", icon: Car, color: "text-foreground", bgColor: "bg-muted/20", path: "/admin/vehicles" },
+    { title: "Active Employees", value: "0", icon: Users, color: "text-muted-foreground", bgColor: "bg-muted/30", path: "/admin/employees" },
+    { title: "Active Trips", value: "0", icon: MapPin, color: "text-foreground", bgColor: "bg-muted/25", path: "/admin/trips" },
+    { title: "Completed Today", value: "0", icon: Activity, color: "text-muted-foreground", bgColor: "bg-muted/35", path: "/admin/trips" },
+  ]);
+  const [recentTrips, setRecentTrips] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      // Fetch vehicle count
+      const { count: vehicleCount } = await supabase
+        .from('vehicles')
+        .select('*', { count: 'exact', head: true });
+
+      // Fetch employee count
+      const { data: employeeRoles } = await supabase
+        .from('user_roles')
+        .select('user_id')
+        .eq('role', 'employee');
+
+      // Fetch active trips
+      const { count: activeTripsCount } = await supabase
+        .from('trips')
+        .select('*', { count: 'exact', head: true })
+        .in('status', ['pending', 'in_progress']);
+
+      // Fetch completed trips today
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const { count: completedTodayCount } = await supabase
+        .from('trips')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'completed')
+        .gte('actual_end_time', today.toISOString());
+
+      // Fetch recent trips
+      const { data: tripsData } = await supabase
+        .from('trips')
+        .select(`
+          *,
+          assigned_employee:profiles!trips_assigned_employee_id_fkey(first_name, last_name, email),
+          route:routes(name),
+          vehicle:vehicles(make, model, license_plate)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+      setStats([
+        { title: "Total Vehicles", value: vehicleCount?.toString() || "0", icon: Car, color: "text-foreground", bgColor: "bg-muted/20", path: "/admin/vehicles" },
+        { title: "Active Employees", value: employeeRoles?.length.toString() || "0", icon: Users, color: "text-muted-foreground", bgColor: "bg-muted/30", path: "/admin/employees" },
+        { title: "Active Trips", value: activeTripsCount?.toString() || "0", icon: MapPin, color: "text-foreground", bgColor: "bg-muted/25", path: "/admin/trips" },
+        { title: "Completed Today", value: completedTodayCount?.toString() || "0", icon: Activity, color: "text-muted-foreground", bgColor: "bg-muted/35", path: "/admin/trips" },
+      ]);
+
+      setRecentTrips(tripsData || []);
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch dashboard data",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = () => {
     navigate("/admin/login");
   };
 
-  const stats = [
-    { title: "Total Vehicles", value: "24", icon: Car, color: "text-foreground", bgColor: "bg-muted/20", path: "/admin/vehicles" },
-    { title: "Active Employees", value: "18", icon: Users, color: "text-muted-foreground", bgColor: "bg-muted/30", path: "/admin/employees" },
-    { title: "Active Trips", value: "7", icon: MapPin, color: "text-foreground", bgColor: "bg-muted/25", path: "/admin/trips" },
-    { title: "Completed Today", value: "12", icon: Activity, color: "text-muted-foreground", bgColor: "bg-muted/35", path: "/admin/trips" },
-  ];
-
-  const recentTrips = [
-    { id: "T001", driver: "John Doe", route: "Route A-B", status: "In Progress", vehicle: "VH-001" },
-    { id: "T002", driver: "Jane Smith", route: "Route C-D", status: "Completed", vehicle: "VH-003" },
-    { id: "T003", driver: "Mike Johnson", route: "Route E-F", status: "Pending", vehicle: "VH-007" },
-  ];
+  const getEmployeeName = (employee: any) => {
+    if (!employee) return 'Unassigned';
+    if (employee.first_name && employee.last_name) {
+      return `${employee.first_name} ${employee.last_name}`;
+    }
+    return employee.first_name || employee.last_name || employee.email;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-hero">
@@ -138,28 +209,38 @@ const AdminDashboard = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-6">
-              {recentTrips.map((trip) => (
-                <div key={trip.id} className="flex items-center justify-between p-6 border rounded-xl bg-gradient-card hover:shadow-lg transition-all duration-300">
-                  <div className="flex items-center space-x-6">
-                    <div>
-                      <p className="font-medium">{trip.id}</p>
-                      <p className="text-sm text-muted-foreground">{trip.driver}</p>
+            {loading ? (
+              <div className="text-center py-8">Loading trips...</div>
+            ) : recentTrips.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                No trips found
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {recentTrips.map((trip) => (
+                  <div key={trip.id} className="flex items-center justify-between p-6 border rounded-xl bg-gradient-card hover:shadow-lg transition-all duration-300">
+                    <div className="flex items-center space-x-6">
+                      <div>
+                        <p className="font-medium">{trip.id.slice(0, 8)}</p>
+                        <p className="text-sm text-muted-foreground">{getEmployeeName(trip.assigned_employee)}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm">{trip.route?.name || 'No route'}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Vehicle: {trip.vehicle ? `${trip.vehicle.make} ${trip.vehicle.model}` : 'N/A'}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm">{trip.route}</p>
-                      <p className="text-sm text-muted-foreground">Vehicle: {trip.vehicle}</p>
-                    </div>
+                    <Badge variant={
+                      trip.status === "completed" ? "default" :
+                      trip.status === "in_progress" ? "secondary" : "outline"
+                    }>
+                      {trip.status.replace('_', ' ').toUpperCase()}
+                    </Badge>
                   </div>
-                  <Badge variant={
-                    trip.status === "Completed" ? "default" :
-                    trip.status === "In Progress" ? "secondary" : "outline"
-                  }>
-                    {trip.status}
-                  </Badge>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
