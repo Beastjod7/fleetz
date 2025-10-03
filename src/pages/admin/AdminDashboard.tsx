@@ -9,7 +9,8 @@ import {
   MapPin, 
   Activity,
   Plus,
-  LogOut
+  LogOut,
+  FileSpreadsheet
 } from "lucide-react";
 import LiveMap from "@/components/LiveMap";
 import LiveUpdates from "@/components/LiveUpdates";
@@ -111,6 +112,10 @@ const AdminDashboard = () => {
         <div className="flex h-16 items-center px-4 md:px-6">
           <h1 className="text-xl font-semibold">Fleet Management - Admin</h1>
           <div className="ml-auto flex items-center space-x-4">
+            <Button variant="secondary" size="sm" onClick={() => navigate("/admin/trips")}>
+              <FileSpreadsheet className="mr-2 h-4 w-4" />
+              Export Reports
+            </Button>
             <Button variant="outline" size="sm" onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
               Logout

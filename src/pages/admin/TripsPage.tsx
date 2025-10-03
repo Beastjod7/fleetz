@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Search, Plus, MapPin } from "lucide-react";
+import { ArrowLeft, Search, Plus, MapPin, FileSpreadsheet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import * as XLSX from 'xlsx';
 
 interface Trip {
   id: string;
@@ -117,6 +118,65 @@ const TripsPage = () => {
 
   const filteredTrips = getFilteredTrips();
 
+  const exportToExcel = () => {
+    if (trips.length === 0) {
+      toast({
+        title: "No Data",
+        description: "There are no trips to export",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Prepare data for export
+    const exportData = trips.map(trip => ({
+      'Trip ID': trip.id,
+      'Employee Name': getEmployeeName(trip.assigned_employee),
+      'Employee Email': trip.assigned_employee?.email || 'Unassigned',
+      'Route': trip.route?.name || 'No route',
+      'Start Location': trip.route?.start_location || 'N/A',
+      'End Location': trip.route?.end_location || 'N/A',
+      'Vehicle': trip.vehicle ? `${trip.vehicle.make} ${trip.vehicle.model}` : 'No vehicle',
+      'License Plate': trip.vehicle?.license_plate || 'N/A',
+      'Status': trip.status.replace('_', ' ').toUpperCase(),
+      'Scheduled Start': new Date(trip.scheduled_start_time).toLocaleString(),
+      'Scheduled End': new Date(trip.scheduled_end_time).toLocaleString(),
+      'Actual Start': trip.actual_start_time ? new Date(trip.actual_start_time).toLocaleString() : 'N/A',
+      'Actual End': trip.actual_end_time ? new Date(trip.actual_end_time).toLocaleString() : 'N/A',
+      'Notes': trip.notes || 'N/A',
+      'Trip Log': trip.trip_log || 'N/A',
+    }));
+
+    // Create workbook and worksheet
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Trip Reports');
+
+    // Auto-size columns
+    const maxWidth = 50;
+    const colWidths = Object.keys(exportData[0] || {}).map(key => ({
+      wch: Math.min(
+        Math.max(
+          key.length,
+          ...exportData.map(row => String(row[key as keyof typeof row]).length)
+        ),
+        maxWidth
+      )
+    }));
+    ws['!cols'] = colWidths;
+
+    // Generate filename with current date
+    const fileName = `trip_reports_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+    // Export file
+    XLSX.writeFile(wb, fileName);
+
+    toast({
+      title: "Success",
+      description: `Exported ${trips.length} trips to ${fileName}`,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-hero">
       <header className="border-b bg-gradient-card backdrop-blur-lg border-border/50">
@@ -127,7 +187,11 @@ const TripsPage = () => {
           </Button>
           <h1 className="text-xl font-semibold">Trip Management</h1>
           <div className="ml-auto flex items-center space-x-4">
-            <Button>
+            <Button variant="outline" onClick={exportToExcel}>
+              <FileSpreadsheet className="mr-2 h-4 w-4" />
+              Export to Excel
+            </Button>
+            <Button onClick={() => navigate("/admin/create-trip")}>
               <Plus className="mr-2 h-4 w-4" />
               Create Trip
             </Button>
