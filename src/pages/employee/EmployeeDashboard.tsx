@@ -399,10 +399,11 @@ const EmployeeDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex gap-4">
-              <Button variant="outline">Update Profile</Button>
-              <Button variant="outline">View Trip History</Button>
-              <Button variant="outline">Submit Feedback</Button>
+            <div className="flex flex-wrap gap-4">
+              <Button variant="outline" onClick={() => navigate("/employee/profile")}>Update Profile</Button>
+              <Button variant="outline" onClick={() => navigate("/employee/trip-history")}>View Trip History</Button>
+              <Button variant="outline" onClick={() => navigate("/employee/feedback")}>Submit Feedback</Button>
+              <Button variant="outline" onClick={() => navigate("/employee/live-updates")}>Live Updates</Button>
             </div>
           </CardContent>
         </Card>
