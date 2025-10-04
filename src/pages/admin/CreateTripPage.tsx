@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,14 +25,6 @@ interface Vehicle {
   status: string;
 }
 
-interface Route {
-  id: string;
-  name: string;
-  start_location: string;
-  end_location: string;
-  distance_km: number | null;
-  estimated_duration_minutes: number | null;
-}
 
 const CreateTripPage = () => {
   const navigate = useNavigate();
@@ -40,12 +32,11 @@ const CreateTripPage = () => {
   const [loading, setLoading] = useState(false);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [routes, setRoutes] = useState<Route[]>([]);
 
   const [formData, setFormData] = useState({
     assigned_employee_id: "",
     vehicle_id: "",
-    route_id: "",
+    route_name: "",
     scheduled_start_time: "",
     scheduled_end_time: "",
     notes: ""
@@ -79,13 +70,6 @@ const CreateTripPage = () => {
         .eq('status', 'available');
       setVehicles(vehiclesData || []);
 
-      // Fetch active routes
-      const { data: routesData } = await supabase
-        .from('routes')
-        .select('id, name, start_location, end_location, distance_km, estimated_duration_minutes')
-        .eq('is_active', true);
-      setRoutes(routesData || []);
-
     } catch (error) {
       console.error('Error fetching data:', error);
       toast({
@@ -106,7 +90,7 @@ const CreateTripPage = () => {
         .insert({
           assigned_employee_id: formData.assigned_employee_id || null,
           vehicle_id: formData.vehicle_id,
-          route_id: formData.route_id,
+          route_name: formData.route_name,
           scheduled_start_time: formData.scheduled_start_time,
           scheduled_end_time: formData.scheduled_end_time,
           notes: formData.notes || null,
@@ -134,12 +118,15 @@ const CreateTripPage = () => {
     }
   };
 
-  const getEmployeeName = (employee: Employee) => {
+  const getEmployeeName = useCallback((employee: Employee) => {
     if (employee.first_name && employee.last_name) {
       return `${employee.first_name} ${employee.last_name}`;
     }
     return employee.first_name || employee.last_name || employee.email;
-  };
+  }, []);
+
+  const availableVehicles = useMemo(() => vehicles, [vehicles]);
+  const activeEmployees = useMemo(() => employees, [employees]);
 
   return (
     <div className="min-h-screen bg-gradient-hero">
@@ -153,39 +140,30 @@ const CreateTripPage = () => {
         </div>
       </header>
 
-      <div className="p-4 md:p-6 max-w-4xl mx-auto">
+      <div className="p-6 md:p-8 max-w-5xl mx-auto">
         <Card className="border-primary/20">
           <CardHeader>
-            <CardTitle className="text-2xl flex items-center">
+            <CardTitle className="text-xl md:text-2xl flex items-center">
               <MapPin className="h-6 w-6 mr-2" />
               Trip Details
             </CardTitle>
-            <CardDescription className="text-lg">
+            <CardDescription>
               Create and assign a new trip to your fleet
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="route">Route *</Label>
-                  <Select value={formData.route_id} onValueChange={(value) => setFormData(prev => ({ ...prev, route_id: value }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a route" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {routes.map((route) => (
-                        <SelectItem key={route.id} value={route.id}>
-                          <div className="flex flex-col">
-                            <span className="font-medium">{route.name}</span>
-                            <span className="text-sm text-muted-foreground">
-                              {route.start_location} → {route.end_location}
-                            </span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="route_name">Route *</Label>
+                  <Input
+                    id="route_name"
+                    type="text"
+                    placeholder="Enter route name (e.g., Downtown Loop, City Center Route)"
+                    value={formData.route_name}
+                    onChange={(e) => setFormData(prev => ({ ...prev, route_name: e.target.value }))}
+                    required
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -195,7 +173,7 @@ const CreateTripPage = () => {
                       <SelectValue placeholder="Select a vehicle" />
                     </SelectTrigger>
                     <SelectContent>
-                      {vehicles.map((vehicle) => (
+                      {availableVehicles.map((vehicle) => (
                         <SelectItem key={vehicle.id} value={vehicle.id}>
                           {vehicle.make} {vehicle.model} ({vehicle.license_plate})
                         </SelectItem>
@@ -211,7 +189,7 @@ const CreateTripPage = () => {
                       <SelectValue placeholder="Select an employee" />
                     </SelectTrigger>
                     <SelectContent>
-                      {employees.map((employee) => (
+                      {activeEmployees.map((employee) => (
                         <SelectItem key={employee.user_id} value={employee.user_id}>
                           <div className="flex flex-col">
                             <span className="font-medium">{getEmployeeName(employee)}</span>
@@ -257,7 +235,7 @@ const CreateTripPage = () => {
                 />
               </div>
 
-              <div className="flex justify-end space-x-4">
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:space-x-4 pt-4">
                 <Button type="button" variant="outline" onClick={() => navigate("/admin/dashboard")}>
                   Cancel
                 </Button>

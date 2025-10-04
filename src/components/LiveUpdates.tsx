@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -18,7 +18,7 @@ interface LiveUpdatesProps {
   employeeId?: string;
 }
 
-const LiveUpdates: React.FC<LiveUpdatesProps> = ({ isAdmin = false, employeeId }) => {
+const LiveUpdates: React.FC<LiveUpdatesProps> = React.memo(({ isAdmin = false, employeeId }) => {
   const [updates, setUpdates] = useState<Update[]>([]);
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const LiveUpdates: React.FC<LiveUpdatesProps> = ({ isAdmin = false, employeeId }
     }
   };
 
-  const markAsRead = async (id: string) => {
+  const markAsRead = useCallback(async (id: string) => {
     try {
       await supabase
         .from('notifications')
@@ -67,9 +67,9 @@ const LiveUpdates: React.FC<LiveUpdatesProps> = ({ isAdmin = false, employeeId }
     } catch (error) {
       console.error('Error marking notification as read:', error);
     }
-  };
+  }, []);
 
-  const markAllAsRead = async () => {
+  const markAllAsRead = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -86,7 +86,7 @@ const LiveUpdates: React.FC<LiveUpdatesProps> = ({ isAdmin = false, employeeId }
     } catch (error) {
       console.error('Error marking all notifications as read:', error);
     }
-  };
+  }, []);
 
   const getUpdateIcon = (type: Update['type']) => {
     switch (type) {
@@ -117,7 +117,7 @@ const LiveUpdates: React.FC<LiveUpdatesProps> = ({ isAdmin = false, employeeId }
     }
   };
 
-  const unreadCount = updates.filter(update => !update.isRead).length;
+  const unreadCount = useMemo(() => updates.filter(update => !update.isRead).length, [updates]);
 
   const formatTimeAgo = (timestamp: Date) => {
     const now = new Date();
@@ -190,6 +190,8 @@ const LiveUpdates: React.FC<LiveUpdatesProps> = ({ isAdmin = false, employeeId }
       )}
     </Card>
   );
-};
+});
+
+LiveUpdates.displayName = 'LiveUpdates';
 
 export default LiveUpdates;

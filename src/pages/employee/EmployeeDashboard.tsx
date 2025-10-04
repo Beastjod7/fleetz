@@ -13,7 +13,6 @@ import {
   LogOut,
   Bell
 } from "lucide-react";
-import LiveMap from "@/components/LiveMap";
 import LiveUpdates from "@/components/LiveUpdates";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -57,7 +56,6 @@ const EmployeeDashboard = () => {
         .from('trips')
         .select(`
           *,
-          route:routes(name, start_location, end_location),
           vehicle:vehicles(make, model, license_plate)
         `)
         .eq('assigned_employee_id', user.id)
@@ -69,10 +67,7 @@ const EmployeeDashboard = () => {
       // Fetch completed trips
       const { data: completedData } = await supabase
         .from('trips')
-        .select(`
-          *,
-          route:routes(name, start_location, end_location)
-        `)
+        .select('*')
         .eq('assigned_employee_id', user.id)
         .eq('status', 'completed')
         .order('actual_end_time', { ascending: false })
@@ -242,12 +237,12 @@ const EmployeeDashboard = () => {
         </div>
       </header>
 
-      <div className="p-4 md:p-6 space-y-6">
+      <div className="p-6 md:p-8 space-y-8 max-w-7xl mx-auto">
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
           {stats.map((stat) => (
-            <Card key={stat.title} className="hover:scale-105 transition-all duration-300">
-              <CardContent className="p-6">
+            <Card key={stat.title} className="hover:scale-105 transition-all duration-200">
+              <CardContent className="p-4 md:p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">
@@ -264,20 +259,26 @@ const EmployeeDashboard = () => {
           ))}
         </div>
 
-        {/* Live Tracking Section */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <LiveMap employeeId="emp001" />
-          </div>
-          <div>
+        {/* Live Updates Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Bell className="h-5 w-5" />
+              Live Updates & Notifications
+            </CardTitle>
+            <CardDescription>
+              Real-time notifications about your trips and assignments
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <LiveUpdates employeeId="emp001" />
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Assigned Trips */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="text-lg md:text-xl flex items-center gap-2">
               <AlertCircle className="h-5 w-5" />
               Assigned Trips
             </CardTitle>
@@ -312,17 +313,17 @@ const EmployeeDashboard = () => {
                         )}
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                       <div>
                         <p className="text-muted-foreground">Route</p>
-                        <p className="font-medium">{trip.route?.name || 'No route'}</p>
+                        <p className="font-medium">{trip.route_name || 'No route'}</p>
                       </div>
                       <div>
                         <p className="text-muted-foreground">Scheduled</p>
                         <p className="font-medium">
-                          {new Date(trip.scheduled_start_time).toLocaleTimeString([], { 
-                            hour: '2-digit', 
-                            minute: '2-digit' 
+                          {new Date(trip.scheduled_start_time).toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit'
                           })}
                         </p>
                       </div>
@@ -330,12 +331,6 @@ const EmployeeDashboard = () => {
                         <p className="text-muted-foreground">Vehicle</p>
                         <p className="font-medium">
                           {trip.vehicle ? `${trip.vehicle.make} ${trip.vehicle.model}` : 'N/A'}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">From → To</p>
-                        <p className="font-medium text-xs">
-                          {trip.route?.start_location} → {trip.route?.end_location}
                         </p>
                       </div>
                     </div>
@@ -349,7 +344,7 @@ const EmployeeDashboard = () => {
         {/* Recent Completed Trips */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="text-lg md:text-xl flex items-center gap-2">
               <CheckCircle className="h-5 w-5" />
               Recent Completed Trips
             </CardTitle>
@@ -370,7 +365,7 @@ const EmployeeDashboard = () => {
                   <div key={trip.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
                       <p className="font-medium">{trip.id.slice(0, 8)}</p>
-                      <p className="text-sm text-muted-foreground">{trip.route?.name || 'No route'}</p>
+                      <p className="text-sm text-muted-foreground">{trip.route_name || 'No route'}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-sm">

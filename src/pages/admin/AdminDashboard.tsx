@@ -12,7 +12,6 @@ import {
   LogOut,
   FileSpreadsheet
 } from "lucide-react";
-import LiveMap from "@/components/LiveMap";
 import LiveUpdates from "@/components/LiveUpdates";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -67,7 +66,6 @@ const AdminDashboard = () => {
         .select(`
           *,
           assigned_employee:profiles!trips_assigned_employee_id_fkey(first_name, last_name, email),
-          route:routes(name),
           vehicle:vehicles(make, model, license_plate)
         `)
         .order('created_at', { ascending: false })
@@ -124,9 +122,9 @@ const AdminDashboard = () => {
         </div>
       </header>
 
-      <div className="p-4 md:p-6 space-y-6">
+      <div className="p-6 md:p-8 space-y-8 max-w-7xl mx-auto">
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {stats.map((stat) => (
             <Card 
               key={stat.title} 
@@ -150,52 +148,55 @@ const AdminDashboard = () => {
           ))}
         </div>
 
-        {/* Live Tracking Section */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <LiveMap isAdmin={true} />
-          </div>
-          <div>
+        {/* Live Updates Section */}
+        <Card className="border-primary/20">
+          <CardHeader>
+            <CardTitle className="text-2xl">Live Updates</CardTitle>
+            <CardDescription className="text-lg">
+              Real-time notifications and status updates
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <LiveUpdates isAdmin={true} />
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Quick Actions */}
         <Card className="border-primary/20">
           <CardHeader>
-            <CardTitle className="text-2xl">Quick Actions</CardTitle>
-            <CardDescription className="text-lg">
+            <CardTitle className="text-xl md:text-2xl">Quick Actions</CardTitle>
+            <CardDescription>
               Manage your fleet operations efficiently
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Button 
-                className="h-24 flex-col space-y-3 text-lg"
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <Button
+                className="h-20 md:h-24 flex-col space-y-2 text-base md:text-lg"
                 onClick={() => navigate("/admin/create-trip")}
               >
                 <Plus className="h-6 w-6" />
                 <span>Create Trip</span>
               </Button>
-              <Button 
-                variant="outline" 
-                className="h-24 flex-col space-y-3 text-lg hover:bg-secondary/10 hover:border-secondary/40"
+              <Button
+                variant="outline"
+                className="h-20 md:h-24 flex-col space-y-2 text-base md:text-lg hover:bg-secondary/10 hover:border-secondary/40"
                 onClick={() => navigate("/admin/employees")}
               >
                 <Users className="h-6 w-6" />
                 <span>Manage Employees</span>
               </Button>
-              <Button 
-                variant="outline" 
-                className="h-24 flex-col space-y-3 text-lg hover:bg-warning/10 hover:border-warning/40"
+              <Button
+                variant="outline"
+                className="h-20 md:h-24 flex-col space-y-2 text-base md:text-lg hover:bg-warning/10 hover:border-warning/40"
                 onClick={() => navigate("/admin/manage-vehicles")}
               >
                 <Car className="h-6 w-6" />
                 <span>Manage Vehicles</span>
               </Button>
-              <Button 
-                variant="outline" 
-                className="h-24 flex-col space-y-3 text-lg hover:bg-success/10 hover:border-success/40"
+              <Button
+                variant="outline"
+                className="h-20 md:h-24 flex-col space-y-2 text-base md:text-lg hover:bg-success/10 hover:border-success/40"
                 onClick={() => navigate("/admin/manage-routes")}
               >
                 <MapPin className="h-6 w-6" />
@@ -208,8 +209,8 @@ const AdminDashboard = () => {
         {/* Recent Trips */}
         <Card className="border-secondary/20">
           <CardHeader>
-            <CardTitle className="text-2xl">Recent Trips</CardTitle>
-            <CardDescription className="text-lg">
+            <CardTitle className="text-xl md:text-2xl">Recent Trips</CardTitle>
+            <CardDescription>
               Latest trip activities and status updates
             </CardDescription>
           </CardHeader>
@@ -230,7 +231,7 @@ const AdminDashboard = () => {
                         <p className="text-sm text-muted-foreground">{getEmployeeName(trip.assigned_employee)}</p>
                       </div>
                       <div>
-                        <p className="text-sm">{trip.route?.name || 'No route'}</p>
+                        <p className="text-sm">{trip.route_name || 'No route'}</p>
                         <p className="text-sm text-muted-foreground">
                           Vehicle: {trip.vehicle ? `${trip.vehicle.make} ${trip.vehicle.model}` : 'N/A'}
                         </p>

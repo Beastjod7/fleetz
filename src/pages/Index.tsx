@@ -13,18 +13,18 @@ const Index = () => {
       <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/20 rounded-full blur-3xl animate-bounce"></div>
       <div className="absolute bottom-1/4 right-1/4 w-24 h-24 bg-secondary/20 rounded-full blur-2xl animate-pulse"></div>
       
-      <div className="text-center space-y-8 p-6 relative z-10">
-        <div>
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+      <div className="text-center space-y-10 p-6 relative z-10 max-w-6xl mx-auto">
+        <div className="space-y-4">
+          <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
             Fleet Management System
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Comprehensive fleet management solution with separate portals for administrators and employees
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          <Card className="cursor-pointer hover:shadow-primary/20 hover:border-primary/30 transition-all duration-500 group transform hover:scale-105 bg-gradient-to-br from-card via-card/90 to-muted/20" onClick={() => navigate("/admin/login")}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <Card className="cursor-pointer hover:shadow-xl hover:border-primary/30 transition-all duration-300 group hover:scale-105 bg-gradient-to-br from-card via-card/90 to-muted/20" onClick={() => navigate("/admin/login")}>
             <CardHeader className="text-center relative">
               <div className="absolute inset-0 bg-gradient-to-r from-foreground/5 to-muted/10 rounded-t-xl"></div>
               <Shield className="h-16 w-16 mx-auto text-foreground mb-6 group-hover:text-muted-foreground transition-colors duration-300 relative z-10" />

@@ -20,15 +20,11 @@ interface Trip {
   status: string;
   notes: string | null;
   trip_log: string | null;
+  route_name: string;
   assigned_employee: {
     first_name: string | null;
     last_name: string | null;
     email: string;
-  } | null;
-  route: {
-    name: string;
-    start_location: string;
-    end_location: string;
   } | null;
   vehicle: {
     make: string;
@@ -56,7 +52,6 @@ const TripsPage = () => {
         .select(`
           *,
           assigned_employee:profiles!trips_assigned_employee_id_fkey(first_name, last_name, email),
-          route:routes(name, start_location, end_location),
           vehicle:vehicles(make, model, license_plate)
         `)
         .order('created_at', { ascending: false });
@@ -90,7 +85,7 @@ const TripsPage = () => {
       filtered = filtered.filter(trip =>
         trip.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         trip.assigned_employee?.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        trip.route?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        trip.route_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         trip.vehicle?.license_plate.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
@@ -133,9 +128,7 @@ const TripsPage = () => {
       'Trip ID': trip.id,
       'Employee Name': getEmployeeName(trip.assigned_employee),
       'Employee Email': trip.assigned_employee?.email || 'Unassigned',
-      'Route': trip.route?.name || 'No route',
-      'Start Location': trip.route?.start_location || 'N/A',
-      'End Location': trip.route?.end_location || 'N/A',
+      'Route': trip.route_name || 'No route',
       'Vehicle': trip.vehicle ? `${trip.vehicle.make} ${trip.vehicle.model}` : 'No vehicle',
       'License Plate': trip.vehicle?.license_plate || 'N/A',
       'Status': trip.status.replace('_', ' ').toUpperCase(),
@@ -199,26 +192,26 @@ const TripsPage = () => {
         </div>
       </header>
 
-      <div className="p-4 md:p-6 space-y-6">
+      <div className="p-6 md:p-8 space-y-6 max-w-7xl mx-auto">
         <Card className="border-warning/20">
           <CardHeader>
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
-                <CardTitle className="text-2xl flex items-center">
+                <CardTitle className="text-xl md:text-2xl flex items-center">
                   <MapPin className="h-6 w-6 mr-2" />
                   Trip Management
                 </CardTitle>
-                <CardDescription className="text-lg">
+                <CardDescription>
                   Monitor and manage all trips across your fleet
                 </CardDescription>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 w-full md:w-auto">
                 <Search className="h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search trips..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-64"
+                  className="w-full md:w-64"
                 />
               </div>
             </div>
@@ -258,12 +251,7 @@ const TripsPage = () => {
                             </div>
                           </TableCell>
                           <TableCell>
-                            <div>
-                              <p className="font-medium">{trip.route?.name || 'No route'}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {trip.route?.start_location} → {trip.route?.end_location}
-                              </p>
-                            </div>
+                            <p className="font-medium">{trip.route_name || 'No route'}</p>
                           </TableCell>
                           <TableCell>
                             {trip.vehicle ? 
