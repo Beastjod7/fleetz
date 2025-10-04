@@ -9,6 +9,7 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import VehiclesPage from "./pages/admin/VehiclesPage";
 import EmployeesPage from "./pages/admin/EmployeesPage";
+import EmployeeDetailPage from "./pages/admin/EmployeeDetailPage";
 import TripsPage from "./pages/admin/TripsPage";
 import CreateTripPage from "./pages/admin/CreateTripPage";
 import ManageVehiclesPage from "./pages/admin/ManageVehiclesPage";
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/vehicles" element={<VehiclesPage />} />
           <Route path="/admin/employees" element={<EmployeesPage />} />
+          <Route path="/admin/employees/:employeeId" element={<EmployeeDetailPage />} />
           <Route path="/admin/trips" element={<TripsPage />} />
           <Route path="/admin/create-trip" element={<CreateTripPage />} />
           <Route path="/admin/manage-vehicles" element={<ManageVehiclesPage />} />

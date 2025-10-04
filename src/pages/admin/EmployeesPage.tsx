@@ -149,7 +149,11 @@ const EmployeesPage = () => {
                         {new Date(employee.created_at).toLocaleDateString()}
                       </TableCell>
                       <TableCell>
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => navigate(`/admin/employees/${employee.user_id}`)}
+                        >
                           View Details
                         </Button>
                       </TableCell>
