@@ -85,7 +85,12 @@ const CreateTripPage = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      const { data: trip, error: tripError } = await supabase
         .from('trips')
         .insert({
           assigned_employee_id: formData.assigned_employee_id || null,
@@ -94,23 +99,55 @@ const CreateTripPage = () => {
           scheduled_start_time: formData.scheduled_start_time,
           scheduled_end_time: formData.scheduled_end_time,
           notes: formData.notes || null,
-          assigned_by_admin_id: (await supabase.auth.getUser()).data.user?.id,
+          assigned_by_admin_id: user.id,
           status: 'pending'
+        })
+        .select()
+        .single();
+
+      if (tripError) throw tripError;
+
+      if (formData.assigned_employee_id) {
+        const { error: notificationError } = await supabase
+          .from('notifications')
+          .insert({
+            user_id: formData.assigned_employee_id,
+            trip_id: trip.id,
+            title: 'New Trip Assignment',
+            message: `You have been assigned to a new trip: ${formData.route_name}. Scheduled to start at ${new Date(formData.scheduled_start_time).toLocaleString()}.`,
+            type: 'trip_assignment'
+          });
+
+        if (notificationError) {
+          console.error('Error creating notification:', notificationError);
+        }
+      }
+
+      const { error: adminNotificationError } = await supabase
+        .from('notifications')
+        .insert({
+          user_id: user.id,
+          trip_id: trip.id,
+          title: 'Trip Created',
+          message: `Trip created successfully: ${formData.route_name}${formData.assigned_employee_id ? ' and employee assigned' : ''}.`,
+          type: 'status_change'
         });
 
-      if (error) throw error;
+      if (adminNotificationError) {
+        console.error('Error creating admin notification:', adminNotificationError);
+      }
 
       toast({
         title: "Success",
         description: "Trip created successfully",
       });
 
-      navigate("/admin/trips");
+      navigate("/admin/dashboard");
     } catch (error) {
       console.error('Error creating trip:', error);
       toast({
         title: "Error",
-        description: "Failed to create trip",
+        description: error instanceof Error ? error.message : "Failed to create trip",
         variant: "destructive",
       });
     } finally {
