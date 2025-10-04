@@ -4,15 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
-import { 
-  MapPin, 
-  Clock, 
-  CheckCircle,
-  AlertCircle,
-  User,
-  LogOut,
-  Bell
-} from "lucide-react";
+import { MapPin, Clock, CircleCheck as CheckCircle, CircleAlert as AlertCircle, User, LogOut, Bell } from "lucide-react";
 import LiveUpdates from "@/components/LiveUpdates";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
