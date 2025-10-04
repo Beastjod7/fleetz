@@ -94,11 +94,51 @@ const EmployeeLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-hero relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,hsl(var(--secondary)/0.15),transparent_50%)]"></div>
-      <div className="absolute bottom-1/3 left-1/4 w-40 h-40 bg-secondary/10 rounded-full blur-3xl"></div>
-      
-      <Card className="w-full max-w-md relative z-10 border-secondary/20 shadow-secondary/10">
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: 'url(https://images.pexels.com/photos/1125850/pexels-photo-1125850.jpeg?auto=compress&cs=tinysrgb&w=1920)',
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/75 via-blue-900/70 to-slate-900/75 backdrop-blur-sm"></div>
+      </div>
+
+      <div className="w-full max-w-5xl mx-auto px-4 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <div className="hidden lg:block text-white space-y-6">
+          <h1 className="text-5xl font-bold">Employee Portal</h1>
+          <p className="text-xl text-gray-200">
+            Your gateway to efficient trip management
+          </p>
+          <ul className="space-y-4 text-lg">
+            <li className="flex items-start gap-3">
+              <svg className="w-6 h-6 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span>View all your assigned trips and schedules</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <svg className="w-6 h-6 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span>Update trip status with real-time tracking</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <svg className="w-6 h-6 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span>Access detailed route and vehicle information</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <svg className="w-6 h-6 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span>View your trip history and performance</span>
+            </li>
+          </ul>
+        </div>
+
+        <Card className="w-full relative border-secondary/20 shadow-2xl bg-white/95 backdrop-blur-md">
         <CardHeader className="text-center relative">
           <div className="absolute inset-0 bg-gradient-to-r from-muted-foreground/5 to-muted/10 rounded-t-xl"></div>
           <CardTitle className="text-3xl font-bold text-muted-foreground relative z-10">Employee Portal</CardTitle>
@@ -210,6 +250,7 @@ const EmployeeLogin = () => {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };

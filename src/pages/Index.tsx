@@ -57,13 +57,6 @@ const Index = () => {
           </Card>
         </div>
 
-        <div className="text-sm text-muted-foreground bg-card/50 backdrop-blur-sm rounded-xl p-6 border border-border/50 shadow-elegant">
-          <p className="font-semibold text-foreground mb-2">Demo Credentials:</p>
-          <div className="space-y-1">
-            <p><span className="font-medium text-foreground">Admin:</span> admin@fleet.com / admin123</p>
-            <p><span className="font-medium text-muted-foreground">Employee:</span> employee@fleet.com / emp123</p>
-          </div>
-        </div>
       </div>
     </div>
   );
