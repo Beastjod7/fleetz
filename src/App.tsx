@@ -20,6 +20,8 @@ import EmployeeProfile from "./pages/employee/EmployeeProfile";
 import TripHistory from "./pages/employee/TripHistory";
 import FeedbackPage from "./pages/employee/FeedbackPage";
 import LiveUpdatesPage from "./pages/employee/LiveUpdatesPage";
+import AddEmployeePage from "./pages/admin/AddEmployeePage";
+import TripDetailsPage from "./pages/employee/TripDetailsPage";
 
 const queryClient = new QueryClient();
 
@@ -40,12 +42,14 @@ const App = () => (
           <Route path="/admin/create-trip" element={<CreateTripPage />} />
           <Route path="/admin/manage-vehicles" element={<ManageVehiclesPage />} />
           <Route path="/admin/manage-routes" element={<ManageRoutesPage />} />
+          <Route path="/admin/add-employee" element={<AddEmployeePage />} />
           <Route path="/employee/login" element={<EmployeeLogin />} />
           <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
           <Route path="/employee/profile" element={<EmployeeProfile />} />
           <Route path="/employee/trip-history" element={<TripHistory />} />
           <Route path="/employee/feedback" element={<FeedbackPage />} />
           <Route path="/employee/live-updates" element={<LiveUpdatesPage />} />
+          <Route path="/employee/trip-details" element={<TripDetailsPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -401,6 +401,7 @@ const EmployeeDashboard = () => {
           <CardContent>
             <div className="flex flex-wrap gap-4">
               <Button variant="outline" onClick={() => navigate("/employee/profile")}>Update Profile</Button>
+              <Button variant="outline" onClick={() => navigate("/employee/trip-details")}>Trip Details</Button>
               <Button variant="outline" onClick={() => navigate("/employee/trip-history")}>View Trip History</Button>
               <Button variant="outline" onClick={() => navigate("/employee/feedback")}>Submit Feedback</Button>
               <Button variant="outline" onClick={() => navigate("/employee/live-updates")}>Live Updates</Button>

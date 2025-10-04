@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Search, Plus, Users } from "lucide-react";
+import { ArrowLeft, Search, Plus, Users, UserPlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -88,8 +88,8 @@ const EmployeesPage = () => {
           </Button>
           <h1 className="text-xl font-semibold">Employee Management</h1>
           <div className="ml-auto flex items-center space-x-4">
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
+            <Button onClick={() => navigate("/admin/add-employee")}>
+              <UserPlus className="mr-2 h-4 w-4" />
               Add Employee
             </Button>
           </div>
