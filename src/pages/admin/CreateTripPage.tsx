@@ -97,6 +97,45 @@ const CreateTripPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate required fields
+    if (!formData.route_id) {
+      toast({
+        title: "Validation Error",
+        description: "Please select a route",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.vehicle_id) {
+      toast({
+        title: "Validation Error",
+        description: "Please select a vehicle",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.scheduled_start_time || !formData.scheduled_end_time) {
+      toast({
+        title: "Validation Error",
+        description: "Please set start and end times",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate end time is after start time
+    if (new Date(formData.scheduled_end_time) <= new Date(formData.scheduled_start_time)) {
+      toast({
+        title: "Validation Error",
+        description: "End time must be after start time",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
