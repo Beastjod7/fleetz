@@ -20,7 +20,11 @@ interface Trip {
   status: string;
   notes: string | null;
   trip_log: string | null;
-  route_name: string;
+  route: {
+    name: string;
+    start_location: string;
+    end_location: string;
+  } | null;
   assigned_employee: {
     first_name: string | null;
     last_name: string | null;
@@ -51,6 +55,7 @@ const TripsPage = () => {
         .from('trips')
         .select(`
           *,
+          route:routes(name, start_location, end_location),
           assigned_employee:profiles!trips_assigned_employee_id_fkey(first_name, last_name, email),
           vehicle:vehicles(make, model, license_plate)
         `)
@@ -58,6 +63,26 @@ const TripsPage = () => {
 
       if (error) throw error;
       setTrips(data || []);
+
+      // Subscribe to realtime updates
+      const channel = supabase
+        .channel('trips-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'trips'
+          },
+          () => {
+            fetchTrips();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
     } catch (error) {
       console.error('Error fetching trips:', error);
       toast({
@@ -85,7 +110,7 @@ const TripsPage = () => {
       filtered = filtered.filter(trip =>
         trip.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         trip.assigned_employee?.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        trip.route_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        trip.route?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         trip.vehicle?.license_plate.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
@@ -128,7 +153,7 @@ const TripsPage = () => {
       'Trip ID': trip.id,
       'Employee Name': getEmployeeName(trip.assigned_employee),
       'Employee Email': trip.assigned_employee?.email || 'Unassigned',
-      'Route': trip.route_name || 'No route',
+      'Route': trip.route?.name || 'No route',
       'Vehicle': trip.vehicle ? `${trip.vehicle.make} ${trip.vehicle.model}` : 'No vehicle',
       'License Plate': trip.vehicle?.license_plate || 'N/A',
       'Status': trip.status.replace('_', ' ').toUpperCase(),
@@ -251,7 +276,7 @@ const TripsPage = () => {
                             </div>
                           </TableCell>
                           <TableCell>
-                            <p className="font-medium">{trip.route_name || 'No route'}</p>
+                            <p className="font-medium">{trip.route?.name || 'No route'}</p>
                           </TableCell>
                           <TableCell>
                             {trip.vehicle ? 

@@ -25,6 +25,26 @@ const TripDetailsPage = () => {
 
   useEffect(() => {
     fetchData();
+
+    // Subscribe to realtime updates for trips
+    const channel = supabase
+      .channel('employee-trips-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'trips'
+        },
+        () => {
+          fetchData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchData = async () => {

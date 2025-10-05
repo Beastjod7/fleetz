@@ -25,6 +25,13 @@ interface Vehicle {
   status: string;
 }
 
+interface Route {
+  id: string;
+  name: string;
+  start_location: string;
+  end_location: string;
+}
+
 
 const CreateTripPage = () => {
   const navigate = useNavigate();
@@ -32,11 +39,12 @@ const CreateTripPage = () => {
   const [loading, setLoading] = useState(false);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [routes, setRoutes] = useState<Route[]>([]);
 
   const [formData, setFormData] = useState({
     assigned_employee_id: "",
     vehicle_id: "",
-    route_name: "",
+    route_id: "",
     scheduled_start_time: "",
     scheduled_end_time: "",
     notes: ""
@@ -70,6 +78,13 @@ const CreateTripPage = () => {
         .eq('status', 'available');
       setVehicles(vehiclesData || []);
 
+      // Fetch active routes
+      const { data: routesData } = await supabase
+        .from('routes')
+        .select('id, name, start_location, end_location')
+        .eq('is_active', true);
+      setRoutes(routesData || []);
+
     } catch (error) {
       console.error('Error fetching data:', error);
       toast({
@@ -95,7 +110,7 @@ const CreateTripPage = () => {
         .insert({
           assigned_employee_id: formData.assigned_employee_id || null,
           vehicle_id: formData.vehicle_id,
-          route_name: formData.route_name,
+          route_id: formData.route_id,
           scheduled_start_time: formData.scheduled_start_time,
           scheduled_end_time: formData.scheduled_end_time,
           notes: formData.notes || null,
@@ -108,13 +123,14 @@ const CreateTripPage = () => {
       if (tripError) throw tripError;
 
       if (formData.assigned_employee_id) {
+        const selectedRoute = routes.find(r => r.id === formData.route_id);
         const { error: notificationError } = await supabase
           .from('notifications')
           .insert({
             user_id: formData.assigned_employee_id,
             trip_id: trip.id,
             title: 'New Trip Assignment',
-            message: `You have been assigned to a new trip: ${formData.route_name}. Scheduled to start at ${new Date(formData.scheduled_start_time).toLocaleString()}.`,
+            message: `You have been assigned to a new trip: ${selectedRoute?.name || 'Route'}. Scheduled to start at ${new Date(formData.scheduled_start_time).toLocaleString()}.`,
             type: 'trip_assignment'
           });
 
@@ -123,13 +139,14 @@ const CreateTripPage = () => {
         }
       }
 
+      const selectedRoute = routes.find(r => r.id === formData.route_id);
       const { error: adminNotificationError } = await supabase
         .from('notifications')
         .insert({
           user_id: user.id,
           trip_id: trip.id,
           title: 'Trip Created',
-          message: `Trip created successfully: ${formData.route_name}${formData.assigned_employee_id ? ' and employee assigned' : ''}.`,
+          message: `Trip created successfully: ${selectedRoute?.name || 'Route'}${formData.assigned_employee_id ? ' and employee assigned' : ''}.`,
           type: 'status_change'
         });
 
@@ -164,6 +181,7 @@ const CreateTripPage = () => {
 
   const availableVehicles = useMemo(() => vehicles, [vehicles]);
   const activeEmployees = useMemo(() => employees, [employees]);
+  const activeRoutes = useMemo(() => routes, [routes]);
 
   return (
     <div className="min-h-screen bg-gradient-hero">
@@ -192,20 +210,24 @@ const CreateTripPage = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="route_name">Route *</Label>
-                  <Input
-                    id="route_name"
-                    type="text"
-                    placeholder="Enter route name (e.g., Downtown Loop, City Center Route)"
-                    value={formData.route_name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, route_name: e.target.value }))}
-                    required
-                  />
+                  <Label htmlFor="route">Route *</Label>
+                  <Select value={formData.route_id} onValueChange={(value) => setFormData(prev => ({ ...prev, route_id: value }))} required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a route" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {activeRoutes.map((route) => (
+                        <SelectItem key={route.id} value={route.id}>
+                          {route.name} ({route.start_location} → {route.end_location})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="vehicle">Vehicle *</Label>
-                  <Select value={formData.vehicle_id} onValueChange={(value) => setFormData(prev => ({ ...prev, vehicle_id: value }))}>
+                  <Select value={formData.vehicle_id} onValueChange={(value) => setFormData(prev => ({ ...prev, vehicle_id: value }))} required>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a vehicle" />
                     </SelectTrigger>
