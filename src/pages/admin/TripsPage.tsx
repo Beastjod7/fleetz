@@ -303,7 +303,11 @@ const TripsPage = () => {
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Button variant="outline" size="sm">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => navigate(`/admin/trip-details?id=${trip.id}`)}
+                            >
                               View Details
                             </Button>
                           </TableCell>

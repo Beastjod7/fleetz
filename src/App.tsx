@@ -22,6 +22,7 @@ import FeedbackPage from "./pages/employee/FeedbackPage";
 import LiveUpdatesPage from "./pages/employee/LiveUpdatesPage";
 import AddEmployeePage from "./pages/admin/AddEmployeePage";
 import TripDetailsPage from "./pages/employee/TripDetailsPage";
+import TripDetailPage from "./pages/admin/TripDetailPage";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/admin/manage-vehicles" element={<ManageVehiclesPage />} />
           <Route path="/admin/manage-routes" element={<ManageRoutesPage />} />
           <Route path="/admin/add-employee" element={<AddEmployeePage />} />
+          <Route path="/admin/trip-details" element={<TripDetailPage />} />
           <Route path="/employee/login" element={<EmployeeLogin />} />
           <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
           <Route path="/employee/profile" element={<EmployeeProfile />} />
