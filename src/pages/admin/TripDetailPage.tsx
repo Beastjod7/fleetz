@@ -16,6 +16,7 @@ interface TripDetail {
   status: string;
   notes: string | null;
   trip_log: string | null;
+  hours_driven: number | null;
   route: {
     name: string;
     start_location: string;
@@ -242,6 +243,20 @@ const TripDetailPage = () => {
                     {trip.actual_end_time ? new Date(trip.actual_end_time).toLocaleString() : 'Not completed'}
                   </p>
                 </div>
+              </div>
+            </div>
+
+            {/* Hours Driven */}
+            <div>
+              <h3 className="text-lg font-semibold mb-3 flex items-center">
+                <Clock className="h-5 w-5 mr-2" />
+                Hours Driven (Manual Entry)
+              </h3>
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <p className="text-sm text-muted-foreground">Employee Reported Hours</p>
+                <p className="text-2xl font-bold">
+                  {trip.hours_driven ? `${Math.floor(trip.hours_driven / 24)}d ${(trip.hours_driven % 24).toFixed(1)}h` : 'Not set'}
+                </p>
               </div>
             </div>
 

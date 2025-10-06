@@ -185,6 +185,7 @@ export type Database = {
           assigned_by_admin_id: string
           assigned_employee_id: string | null
           created_at: string
+          hours_driven: number | null
           id: string
           notes: string | null
           route_id: string
@@ -201,6 +202,7 @@ export type Database = {
           assigned_by_admin_id: string
           assigned_employee_id?: string | null
           created_at?: string
+          hours_driven?: number | null
           id?: string
           notes?: string | null
           route_id: string
@@ -217,6 +219,7 @@ export type Database = {
           assigned_by_admin_id?: string
           assigned_employee_id?: string | null
           created_at?: string
+          hours_driven?: number | null
           id?: string
           notes?: string | null
           route_id?: string

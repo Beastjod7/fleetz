@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, MapPin, Clock, CheckCircle, Car } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,6 +23,8 @@ const TripDetailsPage = () => {
   });
   const [todayTrips, setTodayTrips] = useState<any[]>([]);
   const [completedTrips, setCompletedTrips] = useState<any[]>([]);
+  const [selectedTrip, setSelectedTrip] = useState<string | null>(null);
+  const [hoursInput, setHoursInput] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -92,20 +95,16 @@ const TripDetailsPage = () => {
         .order('actual_end_time', { ascending: false });
       setCompletedTrips(completedData || []);
 
-      // Calculate hours driven
+      // Calculate hours driven from manual entries
       const hoursDriven = completedData?.reduce((total, trip) => {
-        if (trip.actual_start_time && trip.actual_end_time) {
-          const start = new Date(trip.actual_start_time);
-          const end = new Date(trip.actual_end_time);
-          return total + (end.getTime() - start.getTime()) / (1000 * 60 * 60);
-        }
-        return total;
+        const hours = trip.hours_driven ? parseFloat(String(trip.hours_driven)) : 0;
+        return total + hours;
       }, 0) || 0;
 
       setStats({
         tripsToday: todayData?.length || 0,
         completed: completedData?.length || 0,
-        hoursDriven: parseFloat(hoursDriven.toFixed(1))
+        hoursDriven: hoursDriven
       });
 
     } catch (error) {
@@ -162,9 +161,70 @@ const TripDetailsPage = () => {
     const startDate = new Date(start);
     const endDate = new Date(end);
     const diff = endDate.getTime() - startDate.getTime();
-    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (days > 0) {
+      return `${days}d ${hours}h ${minutes}m`;
+    }
     return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+  };
+
+  const formatHoursDriven = (hours: number) => {
+    const days = Math.floor(hours / 24);
+    const remainingHours = hours % 24;
+    
+    if (days > 0) {
+      return `${days}d ${remainingHours.toFixed(1)}h`;
+    }
+    return `${hours.toFixed(1)}h`;
+  };
+
+  const handleUpdateHours = async (tripId: string) => {
+    if (!hoursInput) {
+      toast({
+        title: "Error",
+        description: "Please enter hours driven",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const hours = parseFloat(hoursInput);
+    if (isNaN(hours) || hours < 0) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid number",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('trips')
+        .update({ hours_driven: hours })
+        .eq('id', tripId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Hours driven updated successfully",
+      });
+
+      setSelectedTrip(null);
+      setHoursInput("");
+      fetchData();
+    } catch (error) {
+      console.error('Error updating hours:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update hours driven",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -211,7 +271,7 @@ const TripDetailsPage = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Hours Driven</p>
-                  <p className="text-3xl font-bold">{stats.hoursDriven}</p>
+                  <p className="text-3xl font-bold">{formatHoursDriven(stats.hoursDriven)}</p>
                 </div>
                 <Clock className="h-8 w-8 text-foreground" />
               </div>
@@ -301,11 +361,39 @@ const TripDetailsPage = () => {
                       <h3 className="font-medium">{trip.route?.name || 'No route'}</h3>
                       <Badge>COMPLETED</Badge>
                     </div>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <p className="text-muted-foreground">
-                        Duration: {trip.actual_start_time && trip.actual_end_time ? formatDuration(trip.actual_start_time, trip.actual_end_time) : 'N/A'}
-                      </p>
-                      <p className="text-muted-foreground">Vehicle: {trip.vehicle ? `${trip.vehicle.make} ${trip.vehicle.model}` : 'N/A'}</p>
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <p className="text-muted-foreground">
+                          Duration: {trip.actual_start_time && trip.actual_end_time ? formatDuration(trip.actual_start_time, trip.actual_end_time) : 'N/A'}
+                        </p>
+                        <p className="text-muted-foreground">Vehicle: {trip.vehicle ? `${trip.vehicle.make} ${trip.vehicle.model}` : 'N/A'}</p>
+                      </div>
+                      <div className="border-t pt-3">
+                        <Label className="text-sm font-medium">Hours Driven: {trip.hours_driven ? formatHoursDriven(parseFloat(trip.hours_driven)) : 'Not set'}</Label>
+                        {selectedTrip === trip.id ? (
+                          <div className="flex gap-2 mt-2">
+                            <Input
+                              type="number"
+                              step="0.1"
+                              placeholder="Enter hours"
+                              value={hoursInput}
+                              onChange={(e) => setHoursInput(e.target.value)}
+                              className="flex-1"
+                            />
+                            <Button size="sm" onClick={() => handleUpdateHours(trip.id)}>Save</Button>
+                            <Button size="sm" variant="outline" onClick={() => { setSelectedTrip(null); setHoursInput(""); }}>Cancel</Button>
+                          </div>
+                        ) : (
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={() => { setSelectedTrip(trip.id); setHoursInput(trip.hours_driven || ""); }}
+                            className="mt-2"
+                          >
+                            Update Hours
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
