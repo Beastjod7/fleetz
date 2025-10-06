@@ -84,26 +84,33 @@ const EmployeeDashboard = () => {
         .eq('status', 'completed')
         .gte('actual_end_time', today.toISOString());
 
-      // Calculate hours driven today
+      // Calculate hours driven today from manual entries
       const { data: completedTodayTrips } = await supabase
         .from('trips')
-        .select('actual_start_time, actual_end_time')
+        .select('hours_driven')
         .eq('assigned_employee_id', user.id)
         .eq('status', 'completed')
-        .gte('actual_end_time', today.toISOString())
-        .not('actual_start_time', 'is', null)
-        .not('actual_end_time', 'is', null);
+        .gte('actual_end_time', today.toISOString());
 
       const hoursDriven = completedTodayTrips?.reduce((total, trip) => {
-        const start = new Date(trip.actual_start_time!);
-        const end = new Date(trip.actual_end_time!);
-        return total + (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+        const hours = trip.hours_driven ? parseFloat(String(trip.hours_driven)) : 0;
+        return total + hours;
       }, 0) || 0;
+
+      const formatHoursDriven = (hours: number) => {
+        const days = Math.floor(hours / 24);
+        const remainingHours = hours % 24;
+        
+        if (days > 0) {
+          return `${days}d ${remainingHours.toFixed(1)}h`;
+        }
+        return `${hours.toFixed(1)}h`;
+      };
 
       setStats([
         { title: "Trips Today", value: todayTripsCount?.toString() || "0", icon: MapPin, color: "text-foreground", bgColor: "bg-muted/20" },
         { title: "Completed", value: completedCount?.toString() || "0", icon: CheckCircle, color: "text-muted-foreground", bgColor: "bg-muted/30" },
-        { title: "Hours Driven", value: hoursDriven.toFixed(1), icon: Clock, color: "text-foreground", bgColor: "bg-muted/25" },
+        { title: "Hours Driven", value: formatHoursDriven(hoursDriven), icon: Clock, color: "text-foreground", bgColor: "bg-muted/25" },
       ]);
 
     } catch (error) {
