@@ -66,7 +66,8 @@ const AdminDashboard = () => {
         .select(`
           *,
           assigned_employee:profiles!trips_assigned_employee_id_fkey(first_name, last_name, email),
-          vehicle:vehicles(make, model, license_plate)
+          vehicle:vehicles(make, model, license_plate),
+          route:routes(name)
         `)
         .order('created_at', { ascending: false })
         .limit(3);
@@ -231,7 +232,7 @@ const AdminDashboard = () => {
                         <p className="text-sm text-muted-foreground">{getEmployeeName(trip.assigned_employee)}</p>
                       </div>
                       <div>
-                        <p className="text-sm">{trip.route_name || 'No route'}</p>
+                        <p className="text-sm">{trip.route?.name || 'No route'}</p>
                         <p className="text-sm text-muted-foreground">
                           Vehicle: {trip.vehicle ? `${trip.vehicle.make} ${trip.vehicle.model}` : 'N/A'}
                         </p>
