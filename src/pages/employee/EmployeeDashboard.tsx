@@ -48,7 +48,8 @@ const EmployeeDashboard = () => {
         .from('trips')
         .select(`
           *,
-          vehicle:vehicles(make, model, license_plate)
+          vehicle:vehicles(make, model, license_plate),
+          route:routes(name)
         `)
         .eq('assigned_employee_id', user.id)
         .in('status', ['pending', 'in_progress'])
@@ -59,7 +60,10 @@ const EmployeeDashboard = () => {
       // Fetch completed trips
       const { data: completedData } = await supabase
         .from('trips')
-        .select('*')
+        .select(`
+          *,
+          route:routes(name)
+        `)
         .eq('assigned_employee_id', user.id)
         .eq('status', 'completed')
         .order('actual_end_time', { ascending: false })
@@ -315,7 +319,7 @@ const EmployeeDashboard = () => {
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                       <div>
                         <p className="text-muted-foreground">Route</p>
-                        <p className="font-medium">{trip.route_name || 'No route'}</p>
+                        <p className="font-medium">{trip.route?.name || 'No route'}</p>
                       </div>
                       <div>
                         <p className="text-muted-foreground">Scheduled</p>
@@ -364,7 +368,7 @@ const EmployeeDashboard = () => {
                   <div key={trip.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
                       <p className="font-medium">{trip.id.slice(0, 8)}</p>
-                      <p className="text-sm text-muted-foreground">{trip.route_name || 'No route'}</p>
+                      <p className="text-sm text-muted-foreground">{trip.route?.name || 'No route'}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-sm">
