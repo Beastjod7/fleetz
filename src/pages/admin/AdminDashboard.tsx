@@ -107,15 +107,26 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-hero">
       {/* Header */}
-      <header className="border-b bg-gradient-card backdrop-blur-lg border-border/50">
-        <div className="flex h-16 items-center px-4 md:px-6">
-          <h1 className="text-xl font-semibold">Fleet Management - Admin</h1>
-          <div className="ml-auto flex items-center space-x-4">
-            <Button variant="secondary" size="sm" onClick={() => navigate("/admin/trips")}>
+      <header className="border-b bg-card/80 backdrop-blur-lg border-border sticky top-0 z-50">
+        <div className="flex h-16 items-center px-4 md:px-6 max-w-7xl mx-auto">
+          <h1 className="text-xl font-bold tracking-tight">Fleet Management</h1>
+          <span className="ml-2 text-xs font-medium px-2 py-1 rounded-full bg-foreground text-primary-foreground">Admin</span>
+          <div className="ml-auto flex items-center gap-3">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => navigate("/admin/trips")}
+              className="hidden sm:flex hover:bg-muted transition-colors"
+            >
               <FileSpreadsheet className="mr-2 h-4 w-4" />
               Export Reports
             </Button>
-            <Button variant="outline" size="sm" onClick={handleLogout}>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleLogout}
+              className="hover:bg-muted transition-colors"
+            >
               <LogOut className="mr-2 h-4 w-4" />
               Logout
             </Button>
@@ -126,11 +137,12 @@ const AdminDashboard = () => {
       <div className="p-6 md:p-8 space-y-8 max-w-7xl mx-auto">
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-          {stats.map((stat) => (
+          {stats.map((stat, index) => (
             <Card 
               key={stat.title} 
-              className="hover:scale-105 transition-all duration-300 cursor-pointer"
+              className="group cursor-pointer border-border hover:border-foreground/20 hover:shadow-hover transition-all duration-300 hover:-translate-y-1 bg-card"
               onClick={() => navigate(stat.path)}
+              style={{ animationDelay: `${index * 100}ms` }}
             >
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
@@ -138,10 +150,10 @@ const AdminDashboard = () => {
                     <p className="text-sm font-medium text-muted-foreground">
                       {stat.title}
                     </p>
-                    <p className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">{stat.value}</p>
+                    <p className="text-4xl font-bold mt-1 tracking-tight">{stat.value}</p>
                   </div>
-                  <div className={`p-3 rounded-xl ${stat.bgColor}`}>
-                    <stat.icon className={`h-8 w-8 ${stat.color}`} />
+                  <div className="p-3 rounded-xl bg-muted group-hover:bg-foreground group-hover:text-primary-foreground transition-all duration-300">
+                    <stat.icon className="h-7 w-7" />
                   </div>
                 </div>
               </CardContent>
@@ -150,22 +162,25 @@ const AdminDashboard = () => {
         </div>
 
         {/* Live Updates Section */}
-        <Card className="border-primary/20">
-          <CardHeader>
-            <CardTitle className="text-2xl">Live Updates</CardTitle>
-            <CardDescription className="text-lg">
+        <Card className="border-border bg-card overflow-hidden">
+          <CardHeader className="border-b border-border bg-muted/30">
+            <CardTitle className="text-xl font-semibold flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
+              Live Updates
+            </CardTitle>
+            <CardDescription>
               Real-time notifications and status updates
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <LiveUpdates isAdmin={true} />
           </CardContent>
         </Card>
 
         {/* Quick Actions */}
-        <Card className="border-primary/20">
+        <Card className="border-border bg-card">
           <CardHeader>
-            <CardTitle className="text-xl md:text-2xl">Quick Actions</CardTitle>
+            <CardTitle className="text-xl font-semibold">Quick Actions</CardTitle>
             <CardDescription>
               Manage your fleet operations efficiently
             </CardDescription>
@@ -173,7 +188,7 @@ const AdminDashboard = () => {
           <CardContent>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <Button
-                className="h-20 md:h-24 flex-col space-y-2 text-base md:text-lg"
+                className="h-24 flex-col gap-3 text-base font-medium bg-foreground hover:bg-foreground/90 text-primary-foreground transition-all hover:shadow-lg active:scale-[0.98]"
                 onClick={() => navigate("/admin/create-trip")}
               >
                 <Plus className="h-6 w-6" />
@@ -181,7 +196,7 @@ const AdminDashboard = () => {
               </Button>
               <Button
                 variant="outline"
-                className="h-20 md:h-24 flex-col space-y-2 text-base md:text-lg hover:bg-secondary/10 hover:border-secondary/40"
+                className="h-24 flex-col gap-3 text-base font-medium border-border hover:bg-muted hover:border-foreground/30 transition-all active:scale-[0.98]"
                 onClick={() => navigate("/admin/employees")}
               >
                 <Users className="h-6 w-6" />
@@ -189,7 +204,7 @@ const AdminDashboard = () => {
               </Button>
               <Button
                 variant="outline"
-                className="h-20 md:h-24 flex-col space-y-2 text-base md:text-lg hover:bg-warning/10 hover:border-warning/40"
+                className="h-24 flex-col gap-3 text-base font-medium border-border hover:bg-muted hover:border-foreground/30 transition-all active:scale-[0.98]"
                 onClick={() => navigate("/admin/manage-vehicles")}
               >
                 <Car className="h-6 w-6" />
@@ -197,7 +212,7 @@ const AdminDashboard = () => {
               </Button>
               <Button
                 variant="outline"
-                className="h-20 md:h-24 flex-col space-y-2 text-base md:text-lg hover:bg-success/10 hover:border-success/40"
+                className="h-24 flex-col gap-3 text-base font-medium border-border hover:bg-muted hover:border-foreground/30 transition-all active:scale-[0.98]"
                 onClick={() => navigate("/admin/manage-routes")}
               >
                 <MapPin className="h-6 w-6" />
@@ -208,40 +223,56 @@ const AdminDashboard = () => {
         </Card>
 
         {/* Recent Trips */}
-        <Card className="border-secondary/20">
+        <Card className="border-border bg-card">
           <CardHeader>
-            <CardTitle className="text-xl md:text-2xl">Recent Trips</CardTitle>
+            <CardTitle className="text-xl font-semibold">Recent Trips</CardTitle>
             <CardDescription>
               Latest trip activities and status updates
             </CardDescription>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <div className="text-center py-8">Loading trips...</div>
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-20 rounded-xl bg-muted animate-pulse" />
+                ))}
+              </div>
             ) : recentTrips.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                No trips found
+              <div className="text-center py-12 text-muted-foreground">
+                <MapPin className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                <p className="text-lg font-medium">No trips found</p>
+                <p className="text-sm">Create your first trip to get started</p>
               </div>
             ) : (
-              <div className="space-y-6">
-                {recentTrips.map((trip) => (
-                  <div key={trip.id} className="flex items-center justify-between p-6 border rounded-xl bg-gradient-card hover:shadow-lg transition-all duration-300">
-                    <div className="flex items-center space-x-6">
+              <div className="space-y-4">
+                {recentTrips.map((trip, index) => (
+                  <div 
+                    key={trip.id} 
+                    className="flex items-center justify-between p-5 border border-border rounded-xl bg-card hover:bg-muted/50 hover:border-foreground/20 transition-all duration-300 cursor-pointer group"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <div className="flex items-center gap-6">
+                      <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center group-hover:bg-foreground group-hover:text-primary-foreground transition-all">
+                        <Car className="h-5 w-5" />
+                      </div>
                       <div>
                         <p className="font-medium">{trip.id.slice(0, 8)}</p>
                         <p className="text-sm text-muted-foreground">{getEmployeeName(trip.assigned_employee)}</p>
                       </div>
-                      <div>
-                        <p className="text-sm">{trip.route?.name || 'No route'}</p>
+                      <div className="hidden sm:block">
+                        <p className="text-sm font-medium">{trip.route?.name || 'No route'}</p>
                         <p className="text-sm text-muted-foreground">
-                          Vehicle: {trip.vehicle ? `${trip.vehicle.make} ${trip.vehicle.model}` : 'N/A'}
+                          {trip.vehicle ? `${trip.vehicle.make} ${trip.vehicle.model}` : 'N/A'}
                         </p>
                       </div>
                     </div>
-                    <Badge variant={
-                      trip.status === "completed" ? "default" :
-                      trip.status === "in_progress" ? "secondary" : "outline"
-                    }>
+                    <Badge 
+                      variant={
+                        trip.status === "completed" ? "default" :
+                        trip.status === "in_progress" ? "secondary" : "outline"
+                      }
+                      className="font-medium"
+                    >
                       {trip.status.replace('_', ' ').toUpperCase()}
                     </Badge>
                   </div>
