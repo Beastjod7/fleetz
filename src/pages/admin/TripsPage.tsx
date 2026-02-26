@@ -198,20 +198,20 @@ const TripsPage = () => {
   return (
     <div className="min-h-screen bg-gradient-hero">
       <header className="border-b bg-gradient-card backdrop-blur-lg border-border/50">
-        <div className="flex h-16 items-center px-4 md:px-6">
-          <Button variant="ghost" size="sm" onClick={() => navigate("/admin/dashboard")} className="mr-4">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
+        <div className="flex h-14 md:h-16 items-center px-3 md:px-6 gap-2">
+          <Button variant="ghost" size="sm" onClick={() => navigate("/admin/dashboard")} className="shrink-0 h-8 px-2 md:px-3">
+            <ArrowLeft className="h-4 w-4 md:mr-2" />
+            <span className="hidden md:inline">Back to Dashboard</span>
           </Button>
-          <h1 className="text-xl font-semibold">Trip Management</h1>
-          <div className="ml-auto flex items-center space-x-4">
-            <Button variant="outline" onClick={exportToExcel}>
-              <FileSpreadsheet className="mr-2 h-4 w-4" />
-              Export to Excel
+          <h1 className="text-base md:text-xl font-semibold truncate">Trips</h1>
+          <div className="ml-auto flex items-center gap-1.5 md:space-x-4 shrink-0">
+            <Button variant="outline" size="sm" onClick={exportToExcel} className="h-8 px-2 md:px-3">
+              <FileSpreadsheet className="h-4 w-4 md:mr-2" />
+              <span className="hidden md:inline">Export</span>
             </Button>
-            <Button onClick={() => navigate("/admin/create-trip")}>
-              <Plus className="mr-2 h-4 w-4" />
-              Create Trip
+            <Button size="sm" onClick={() => navigate("/admin/create-trip")} className="h-8 px-2 md:px-3">
+              <Plus className="h-4 w-4 md:mr-2" />
+              <span className="hidden md:inline">Create Trip</span>
             </Button>
           </div>
         </div>
@@ -253,7 +253,8 @@ const TripsPage = () => {
                 {loading ? (
                   <div className="text-center py-8">Loading trips...</div>
                 ) : (
-                  <Table>
+                  <div className="overflow-x-auto -mx-6 px-6">
+                  <Table className="min-w-[700px]">
                     <TableHeader>
                       <TableRow>
                         <TableHead>Trip ID</TableHead>
@@ -315,6 +316,7 @@ const TripsPage = () => {
                       ))}
                     </TableBody>
                   </Table>
+                  </div>
                 )}
                 {!loading && filteredTrips.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
