@@ -216,45 +216,45 @@ const EmployeeDashboard = () => {
     <div className="min-h-screen bg-gradient-hero">
       {/* Header */}
       <header className="border-b bg-gradient-card backdrop-blur-lg border-border/50">
-        <div className="flex h-16 items-center px-4 md:px-6">
-          <div className="flex items-center space-x-4">
-            <Avatar>
-              <AvatarFallback>{getInitials(userProfile)}</AvatarFallback>
+        <div className="flex h-14 md:h-16 items-center px-3 md:px-6">
+          <div className="flex items-center space-x-2 md:space-x-4 min-w-0">
+            <Avatar className="h-8 w-8 md:h-10 md:w-10 shrink-0">
+              <AvatarFallback className="text-xs md:text-sm">{getInitials(userProfile)}</AvatarFallback>
             </Avatar>
-            <div>
-              <h1 className="text-xl font-semibold">Welcome back, {getFullName(userProfile)}</h1>
-              <p className="text-sm text-muted-foreground">
+            <div className="min-w-0">
+              <h1 className="text-sm md:text-xl font-semibold truncate">Welcome, {getFullName(userProfile)}</h1>
+              <p className="text-xs md:text-sm text-muted-foreground truncate hidden sm:block">
                 {userProfile?.email || 'Loading...'}
               </p>
             </div>
           </div>
-          <div className="ml-auto flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
+          <div className="ml-auto flex items-center space-x-1 md:space-x-4 shrink-0">
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 md:h-9 md:w-9">
               <Bell className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="sm" onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
+            <Button variant="outline" size="sm" onClick={handleLogout} className="h-8 px-2 md:px-3 text-xs md:text-sm">
+              <LogOut className="h-3.5 w-3.5 md:mr-2" />
+              <span className="hidden md:inline">Logout</span>
             </Button>
           </div>
         </div>
       </header>
 
-      <div className="p-6 md:p-8 space-y-8 max-w-7xl mx-auto">
+      <div className="p-3 md:p-6 lg:p-8 space-y-6 md:space-y-8 max-w-7xl mx-auto">
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-3 gap-2 md:gap-6">
           {stats.map((stat) => (
             <Card key={stat.title} className="hover:scale-105 transition-all duration-200">
-              <CardContent className="p-4 md:p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">
+              <CardContent className="p-3 md:p-6">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-1">
+                  <div className="min-w-0">
+                    <p className="text-[10px] md:text-sm font-medium text-muted-foreground truncate">
                       {stat.title}
                     </p>
-                    <p className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">{stat.value}</p>
+                    <p className="text-xl md:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">{stat.value}</p>
                   </div>
-                  <div className={`p-3 rounded-xl ${stat.bgColor}`}>
-                    <stat.icon className={`h-8 w-8 ${stat.color}`} />
+                  <div className={`p-2 md:p-3 rounded-xl ${stat.bgColor} hidden md:block`}>
+                    <stat.icon className={`h-6 w-6 md:h-8 md:w-8 ${stat.color}`} />
                   </div>
                 </div>
               </CardContent>
@@ -299,24 +299,24 @@ const EmployeeDashboard = () => {
             ) : (
               <div className="space-y-4">
                 {assignedTrips.map((trip) => (
-                  <div key={trip.id} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-3">
+                  <div key={trip.id} className="border rounded-lg p-3 md:p-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-medium">{trip.id.slice(0, 8)}</h3>
-                        <Badge variant={trip.status === "in_progress" ? "default" : "secondary"}>
+                        <h3 className="font-medium text-sm md:text-base">{trip.id.slice(0, 8)}</h3>
+                        <Badge variant={trip.status === "in_progress" ? "default" : "secondary"} className="text-[10px] md:text-xs">
                           {trip.status.replace('_', ' ').toUpperCase()}
                         </Badge>
                       </div>
                       <div className="flex gap-2">
                         {trip.status === "pending" && (
-                          <Button size="sm" onClick={() => handleStartTrip(trip.id)}>Start Trip</Button>
+                          <Button size="sm" className="text-xs md:text-sm h-8" onClick={() => handleStartTrip(trip.id)}>Start Trip</Button>
                         )}
                         {trip.status === "in_progress" && (
-                          <Button size="sm" variant="outline" onClick={() => handleCompleteTrip(trip.id)}>Complete Trip</Button>
+                          <Button size="sm" variant="outline" className="text-xs md:text-sm h-8" onClick={() => handleCompleteTrip(trip.id)}>Complete</Button>
                         )}
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 text-xs md:text-sm">
                       <div>
                         <p className="text-muted-foreground">Route</p>
                         <p className="font-medium">{trip.route?.name || 'No route'}</p>
@@ -397,12 +397,12 @@ const EmployeeDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-wrap gap-4">
-              <Button variant="outline" onClick={() => navigate("/employee/profile")}>Update Profile</Button>
-              <Button variant="outline" onClick={() => navigate("/employee/trip-details")}>Trip Details</Button>
-              <Button variant="outline" onClick={() => navigate("/employee/trip-history")}>View Trip History</Button>
-              <Button variant="outline" onClick={() => navigate("/employee/feedback")}>Submit Feedback</Button>
-              <Button variant="outline" onClick={() => navigate("/employee/live-updates")}>Live Updates</Button>
+            <div className="grid grid-cols-2 md:flex md:flex-wrap gap-2 md:gap-4">
+              <Button variant="outline" size="sm" className="text-xs md:text-sm" onClick={() => navigate("/employee/profile")}>Update Profile</Button>
+              <Button variant="outline" size="sm" className="text-xs md:text-sm" onClick={() => navigate("/employee/trip-details")}>Trip Details</Button>
+              <Button variant="outline" size="sm" className="text-xs md:text-sm" onClick={() => navigate("/employee/trip-history")}>Trip History</Button>
+              <Button variant="outline" size="sm" className="text-xs md:text-sm" onClick={() => navigate("/employee/feedback")}>Feedback</Button>
+              <Button variant="outline" size="sm" className="text-xs md:text-sm col-span-2" onClick={() => navigate("/employee/live-updates")}>Live Updates</Button>
             </div>
           </CardContent>
         </Card>

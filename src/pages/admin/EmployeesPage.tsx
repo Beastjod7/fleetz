@@ -81,16 +81,16 @@ const EmployeesPage = () => {
   return (
     <div className="min-h-screen bg-gradient-hero">
       <header className="border-b bg-gradient-card backdrop-blur-lg border-border/50">
-        <div className="flex h-16 items-center px-4 md:px-6">
-          <Button variant="ghost" size="sm" onClick={() => navigate("/admin/dashboard")} className="mr-4">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
+        <div className="flex h-14 md:h-16 items-center px-3 md:px-6 gap-2">
+          <Button variant="ghost" size="sm" onClick={() => navigate("/admin/dashboard")} className="shrink-0 h-8 px-2 md:px-3">
+            <ArrowLeft className="h-4 w-4 md:mr-2" />
+            <span className="hidden md:inline">Back to Dashboard</span>
           </Button>
-          <h1 className="text-xl font-semibold">Employee Management</h1>
-          <div className="ml-auto flex items-center space-x-4">
-            <Button onClick={() => navigate("/admin/add-employee")}>
-              <UserPlus className="mr-2 h-4 w-4" />
-              Add Employee
+          <h1 className="text-base md:text-xl font-semibold truncate">Employees</h1>
+          <div className="ml-auto shrink-0">
+            <Button size="sm" onClick={() => navigate("/admin/add-employee")} className="h-8 px-2 md:px-3">
+              <UserPlus className="h-4 w-4 md:mr-2" />
+              <span className="hidden md:inline">Add Employee</span>
             </Button>
           </div>
         </div>
@@ -109,13 +109,13 @@ const EmployeesPage = () => {
                   Manage your workforce and employee information
                 </CardDescription>
               </div>
-              <div className="flex items-center space-x-2">
-                <Search className="h-4 w-4 text-muted-foreground" />
+              <div className="flex items-center space-x-2 w-full md:w-auto">
+                <Search className="h-4 w-4 text-muted-foreground shrink-0" />
                 <Input
                   placeholder="Search employees..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-64"
+                  className="w-full md:w-64"
                 />
               </div>
             </div>
@@ -124,7 +124,8 @@ const EmployeesPage = () => {
             {loading ? (
               <div className="text-center py-8">Loading employees...</div>
             ) : (
-              <Table>
+              <div className="overflow-x-auto -mx-6 px-6">
+              <Table className="min-w-[600px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Name</TableHead>
@@ -161,6 +162,7 @@ const EmployeesPage = () => {
                   ))}
                 </TableBody>
               </Table>
+              </div>
             )}
             {!loading && filteredEmployees.length === 0 && (
               <div className="text-center py-8 text-muted-foreground">

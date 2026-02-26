@@ -108,10 +108,10 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-gradient-hero">
       {/* Header */}
       <header className="border-b bg-card/80 backdrop-blur-lg border-border sticky top-0 z-50">
-        <div className="flex h-16 items-center px-4 md:px-6 max-w-7xl mx-auto">
-          <h1 className="text-xl font-bold tracking-tight">Fleet Management</h1>
-          <span className="ml-2 text-xs font-medium px-2 py-1 rounded-full bg-foreground text-primary-foreground">Admin</span>
-          <div className="ml-auto flex items-center gap-3">
+        <div className="flex h-14 md:h-16 items-center px-3 md:px-6 max-w-7xl mx-auto">
+          <h1 className="text-base md:text-xl font-bold tracking-tight truncate">Fleet Mgmt</h1>
+          <span className="ml-1.5 md:ml-2 text-[10px] md:text-xs font-medium px-1.5 md:px-2 py-0.5 md:py-1 rounded-full bg-foreground text-primary-foreground shrink-0">Admin</span>
+          <div className="ml-auto flex items-center gap-1.5 md:gap-3">
             <Button 
               variant="outline" 
               size="sm" 
@@ -134,9 +134,9 @@ const AdminDashboard = () => {
         </div>
       </header>
 
-      <div className="p-6 md:p-8 space-y-8 max-w-7xl mx-auto">
+      <div className="p-3 md:p-6 lg:p-8 space-y-6 md:space-y-8 max-w-7xl mx-auto">
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
           {stats.map((stat, index) => (
             <Card 
               key={stat.title} 
@@ -144,16 +144,16 @@ const AdminDashboard = () => {
               onClick={() => navigate(stat.path)}
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <CardContent className="p-6">
+              <CardContent className="p-3 md:p-6">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">
+                  <div className="min-w-0">
+                    <p className="text-xs md:text-sm font-medium text-muted-foreground truncate">
                       {stat.title}
                     </p>
-                    <p className="text-4xl font-bold mt-1 tracking-tight">{stat.value}</p>
+                    <p className="text-2xl md:text-4xl font-bold mt-1 tracking-tight">{stat.value}</p>
                   </div>
-                  <div className="p-3 rounded-xl bg-muted group-hover:bg-foreground group-hover:text-primary-foreground transition-all duration-300">
-                    <stat.icon className="h-7 w-7" />
+                  <div className="p-2 md:p-3 rounded-xl bg-muted group-hover:bg-foreground group-hover:text-primary-foreground transition-all duration-300 shrink-0">
+                    <stat.icon className="h-5 w-5 md:h-7 md:w-7" />
                   </div>
                 </div>
               </CardContent>
@@ -186,9 +186,9 @@ const AdminDashboard = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
               <Button
-                className="h-24 flex-col gap-3 text-base font-medium bg-foreground hover:bg-foreground/90 text-primary-foreground transition-all hover:shadow-lg active:scale-[0.98]"
+                className="h-20 md:h-24 flex-col gap-2 md:gap-3 text-sm md:text-base font-medium bg-foreground hover:bg-foreground/90 text-primary-foreground transition-all hover:shadow-lg active:scale-[0.98]"
                 onClick={() => navigate("/admin/create-trip")}
               >
                 <Plus className="h-6 w-6" />
@@ -196,27 +196,27 @@ const AdminDashboard = () => {
               </Button>
               <Button
                 variant="outline"
-                className="h-24 flex-col gap-3 text-base font-medium border-border hover:bg-muted hover:border-foreground/30 transition-all active:scale-[0.98]"
+                className="h-20 md:h-24 flex-col gap-2 md:gap-3 text-sm md:text-base font-medium border-border hover:bg-muted hover:border-foreground/30 transition-all active:scale-[0.98]"
                 onClick={() => navigate("/admin/employees")}
               >
-                <Users className="h-6 w-6" />
-                <span>Manage Employees</span>
+                <Users className="h-5 w-5 md:h-6 md:w-6" />
+                <span>Employees</span>
               </Button>
               <Button
                 variant="outline"
-                className="h-24 flex-col gap-3 text-base font-medium border-border hover:bg-muted hover:border-foreground/30 transition-all active:scale-[0.98]"
+                className="h-20 md:h-24 flex-col gap-2 md:gap-3 text-sm md:text-base font-medium border-border hover:bg-muted hover:border-foreground/30 transition-all active:scale-[0.98]"
                 onClick={() => navigate("/admin/manage-vehicles")}
               >
-                <Car className="h-6 w-6" />
-                <span>Manage Vehicles</span>
+                <Car className="h-5 w-5 md:h-6 md:w-6" />
+                <span>Vehicles</span>
               </Button>
               <Button
                 variant="outline"
-                className="h-24 flex-col gap-3 text-base font-medium border-border hover:bg-muted hover:border-foreground/30 transition-all active:scale-[0.98]"
+                className="h-20 md:h-24 flex-col gap-2 md:gap-3 text-sm md:text-base font-medium border-border hover:bg-muted hover:border-foreground/30 transition-all active:scale-[0.98]"
                 onClick={() => navigate("/admin/manage-routes")}
               >
-                <MapPin className="h-6 w-6" />
-                <span>Manage Routes</span>
+                <MapPin className="h-5 w-5 md:h-6 md:w-6" />
+                <span>Routes</span>
               </Button>
             </div>
           </CardContent>
@@ -251,17 +251,17 @@ const AdminDashboard = () => {
                     className="flex items-center justify-between p-5 border border-border rounded-xl bg-card hover:bg-muted/50 hover:border-foreground/20 transition-all duration-300 cursor-pointer group"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    <div className="flex items-center gap-6">
-                      <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center group-hover:bg-foreground group-hover:text-primary-foreground transition-all">
-                        <Car className="h-5 w-5" />
+                    <div className="flex items-center gap-3 md:gap-6 min-w-0">
+                      <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-muted flex items-center justify-center group-hover:bg-foreground group-hover:text-primary-foreground transition-all shrink-0">
+                        <Car className="h-4 w-4 md:h-5 md:w-5" />
                       </div>
-                      <div>
-                        <p className="font-medium">{trip.id.slice(0, 8)}</p>
-                        <p className="text-sm text-muted-foreground">{getEmployeeName(trip.assigned_employee)}</p>
+                      <div className="min-w-0">
+                        <p className="font-medium text-sm md:text-base truncate">{trip.id.slice(0, 8)}</p>
+                        <p className="text-xs md:text-sm text-muted-foreground truncate">{getEmployeeName(trip.assigned_employee)}</p>
                       </div>
-                      <div className="hidden sm:block">
-                        <p className="text-sm font-medium">{trip.route?.name || 'No route'}</p>
-                        <p className="text-sm text-muted-foreground">
+                      <div className="hidden sm:block min-w-0">
+                        <p className="text-sm font-medium truncate">{trip.route?.name || 'No route'}</p>
+                        <p className="text-sm text-muted-foreground truncate">
                           {trip.vehicle ? `${trip.vehicle.make} ${trip.vehicle.model}` : 'N/A'}
                         </p>
                       </div>
