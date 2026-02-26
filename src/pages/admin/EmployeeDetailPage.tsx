@@ -43,12 +43,14 @@ const EmployeeDetailPage = () => {
   const { employeeId } = useParams();
   const [employee, setEmployee] = useState<EmployeeDetail | null>(null);
   const [trips, setTrips] = useState<Trip[]>([]);
+  const [totalTrips, setTotalTrips] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (employeeId) {
       fetchEmployeeDetails();
       fetchEmployeeTrips();
+      fetchTotalTripsCount();
     }
   }, [employeeId]);
 
@@ -91,6 +93,20 @@ const EmployeeDetailPage = () => {
       setTrips(data || []);
     } catch (error) {
       console.error('Error fetching employee trips:', error);
+    }
+  };
+
+  const fetchTotalTripsCount = async () => {
+    try {
+      const { count, error } = await supabase
+        .from('trips')
+        .select('*', { count: 'exact', head: true })
+        .eq('assigned_employee_id', employeeId);
+
+      if (error) throw error;
+      setTotalTrips(count || 0);
+    } catch (error) {
+      console.error('Error fetching total trips count:', error);
     }
   };
 
@@ -191,7 +207,7 @@ const EmployeeDetailPage = () => {
                 <MapPin className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <p className="text-sm text-muted-foreground">Total Trips</p>
-                  <p className="font-medium">{trips.length}</p>
+                  <p className="font-medium">{totalTrips}</p>
                 </div>
               </div>
             </div>
