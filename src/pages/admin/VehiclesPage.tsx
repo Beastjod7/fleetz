@@ -80,7 +80,7 @@ const VehiclesPage = () => {
           </Button>
           <h1 className="text-base md:text-xl font-semibold truncate">Vehicles</h1>
           <div className="ml-auto shrink-0">
-            <Button size="sm" className="h-8 px-2 md:px-3" onClick={() => navigate("/admin/vehicles/manage")}>
+            <Button size="sm" className="h-8 px-2 md:px-3" onClick={() => navigate("/admin/manage-vehicles")}>
               <Plus className="h-4 w-4 md:mr-2" />
               <span className="hidden md:inline">Add Vehicle</span>
             </Button>
