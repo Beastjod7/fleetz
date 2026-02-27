@@ -38,20 +38,26 @@ const EmployeeLogin = () => {
 
       if (data.user) {
         const role = await getUserRole();
-        if (role !== 'employee') {
+        
+        if (role === 'admin') {
+          toast({
+            title: "Login successful",
+            description: "Welcome back, Administrator!",
+          });
+          navigate("/admin/dashboard");
+        } else if (role === 'employee') {
+          toast({
+            title: "Login successful",
+            description: "Welcome back!",
+          });
+          navigate("/employee/dashboard");
+        } else {
           toast({
             title: "Access denied",
-            description: "You don't have employee permissions.",
+            description: "No role assigned to your account.",
             variant: "destructive",
           });
-          return;
         }
-
-        toast({
-          title: "Login successful",
-          description: "Welcome back!",
-        });
-        navigate("/employee/dashboard");
       }
     } catch (error) {
       toast({
@@ -108,8 +114,8 @@ const EmployeeLogin = () => {
       <div className="w-full max-w-5xl mx-auto px-4 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div className="hidden lg:block text-foreground space-y-8 animate-fade-in">
           <h1 className="text-5xl font-bold tracking-tight">
-            Employee Portal
-            <span className="block text-muted-foreground mt-2">Fleet Management</span>
+            Fleet Management
+            <span className="block text-muted-foreground mt-2">Sign In Portal</span>
           </h1>
           <p className="text-xl text-muted-foreground">
             Your gateway to efficient trip management
@@ -140,9 +146,9 @@ const EmployeeLogin = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
-            <CardTitle className="text-2xl font-bold">Employee Portal</CardTitle>
+            <CardTitle className="text-2xl font-bold">Fleet Management</CardTitle>
             <CardDescription>
-              Sign in to access your trips and assignments
+              Sign in to access your dashboard
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -269,17 +275,6 @@ const EmployeeLogin = () => {
               </TabsContent>
             </Tabs>
             
-            <div className="mt-6 pt-6 border-t border-border text-center">
-              <p className="text-sm text-muted-foreground">
-                Administrator?{" "}
-                <span
-                  className="text-foreground font-medium cursor-pointer hover:underline transition-all"
-                  onClick={() => navigate("/admin/login")}
-                >
-                  Sign in here
-                </span>
-              </p>
-            </div>
           </CardContent>
         </Card>
       </div>
