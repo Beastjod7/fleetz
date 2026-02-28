@@ -67,15 +67,24 @@ const EmployeeLogin = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return;
     setIsLoading(true);
 
     try {
       const { data, error } = await signUp(email, password, firstName, lastName, 'employee');
       
       if (error) {
+        // Handle timeout errors gracefully - signup likely succeeded
+        if (error.message?.includes('timeout') || error.status === 504 || error.message === '{}' || !error.message) {
+          toast({
+            title: "Account may have been created",
+            description: "The request timed out, but your account was likely created. Please try signing in, or check your email for verification.",
+          });
+          return;
+        }
         toast({
           title: "Signup failed",
-          description: error.message,
+          description: error.message || "An unexpected error occurred.",
           variant: "destructive",
         });
         return;
@@ -83,13 +92,13 @@ const EmployeeLogin = () => {
 
       toast({
         title: "Account created",
-        description: "Please check your email to verify your account.",
+        description: "Please check your email to verify your account, then sign in.",
       });
-    } catch (error) {
+    } catch (error: any) {
+      // Network timeout or other fetch errors
       toast({
-        title: "Signup failed",
-        description: "An unexpected error occurred.",
-        variant: "destructive",
+        title: "Account may have been created",
+        description: "The request timed out. Please try signing in, or check your email for a verification link.",
       });
     } finally {
       setIsLoading(false);
