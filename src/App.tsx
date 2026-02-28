@@ -24,7 +24,16 @@ import AddEmployeePage from "./pages/admin/AddEmployeePage";
 import TripDetailsPage from "./pages/employee/TripDetailsPage";
 import TripDetailPage from "./pages/admin/TripDetailPage";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -35,7 +44,6 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/admin/login" element={<EmployeeLogin />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/vehicles" element={<VehiclesPage />} />
           <Route path="/admin/employees" element={<EmployeesPage />} />
