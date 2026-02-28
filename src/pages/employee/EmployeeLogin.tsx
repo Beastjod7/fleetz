@@ -37,19 +37,14 @@ const EmployeeLogin = () => {
       }
 
       if (data.user) {
-        const role = await getUserRole();
+        // Pass userId directly to avoid waiting for state update
+        const role = await getUserRole(data.user.id);
         
         if (role === 'admin') {
-          toast({
-            title: "Login successful",
-            description: "Welcome back, Administrator!",
-          });
+          toast({ title: "Login successful", description: "Welcome back, Administrator!" });
           navigate("/admin/dashboard");
         } else if (role === 'employee') {
-          toast({
-            title: "Login successful",
-            description: "Welcome back!",
-          });
+          toast({ title: "Login successful", description: "Welcome back!" });
           navigate("/employee/dashboard");
         } else {
           toast({
