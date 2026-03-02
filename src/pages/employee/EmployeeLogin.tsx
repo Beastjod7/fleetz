@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Eye, EyeOff } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const EmployeeLogin = () => {
   const [email, setEmail] = useState("");
@@ -18,7 +19,7 @@ const EmployeeLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signIn, signUp, getUserRole } = useAuth();
+  const { signIn, getUserRole } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,69 +72,65 @@ const EmployeeLogin = () => {
     setIsLoading(true);
 
     try {
-      const { data, error } = await signUp(email, password, firstName, lastName, 'employee');
-      
-      if (error) {
-        // Handle timeout errors gracefully - signup likely succeeded, try signing in
-        if (error.message?.includes('timeout') || error.status === 504 || error.message === '{}' || !error.message) {
-          // Try to sign in since the account was likely created
-          const { data: signInData, error: signInError } = await signIn(email, password);
-          if (signInData?.user && !signInError) {
-            const role = await getUserRole(signInData.user.id);
-            if (role === 'employee') {
-              toast({ title: "Account created", description: "Welcome!" });
-              navigate("/employee/dashboard");
-              return;
-            } else if (role === 'admin') {
-              toast({ title: "Login successful", description: "Welcome back, Administrator!" });
-              navigate("/admin/dashboard");
-              return;
-            }
-          }
-          toast({
-            title: "Account may have been created",
-            description: "Please try signing in with your credentials.",
-          });
-          return;
-        }
+      const { data: signupData, error: signupError } = await supabase.functions.invoke("employee-signup", {
+        body: {
+          email,
+          password,
+          firstName,
+          lastName,
+        },
+      });
+
+      if (signupError) {
+        const statusCode = (signupError as { context?: { status?: number } })?.context?.status;
+        const apiError =
+          signupData && typeof signupData === "object" && "error" in signupData
+            ? String((signupData as { error?: string }).error)
+            : null;
+        const message = apiError || signupError.message || "Unable to create account.";
+
         toast({
-          title: "Signup failed",
-          description: error.message || "An unexpected error occurred.",
+          title: statusCode === 409 ? "Account already exists" : "Signup failed",
+          description:
+            statusCode === 409
+              ? "This email is already registered. Please sign in instead."
+              : message,
           variant: "destructive",
         });
         return;
       }
 
-      // If signup returned a session, the user is already logged in
-      if (data?.session) {
-        const role = await getUserRole(data.user?.id);
-        if (role === 'employee') {
-          toast({ title: "Account created", description: "Welcome!" });
-          navigate("/employee/dashboard");
-        } else if (role === 'admin') {
-          toast({ title: "Account created", description: "Welcome!" });
-          navigate("/admin/dashboard");
-        } else {
-          // Role might not be assigned yet due to trigger timing, try after a brief delay
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          const retryRole = await getUserRole(data.user?.id);
-          if (retryRole === 'employee') {
-            toast({ title: "Account created", description: "Welcome!" });
-            navigate("/employee/dashboard");
-          } else {
-            toast({ title: "Account created", description: "Please sign in to continue." });
-          }
-        }
-      } else {
+      let { data: signInData, error: signInError } = await signIn(email, password);
+
+      // Small retry in case user propagation takes a moment
+      if (!signInData?.user || signInError) {
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        const retryResult = await signIn(email, password);
+        signInData = retryResult.data;
+        signInError = retryResult.error;
+      }
+
+      if (!signInData?.user || signInError) {
         toast({
           title: "Account created",
           description: "Please sign in with your credentials.",
         });
+        return;
       }
-    } catch (error: any) {
+
+      const role = await getUserRole(signInData.user.id);
+
+      if (role === "admin") {
+        toast({ title: "Login successful", description: "Welcome back, Administrator!" });
+        navigate("/admin/dashboard");
+      } else {
+        toast({ title: "Account created", description: "Welcome!" });
+        navigate("/employee/dashboard");
+      }
+    } catch {
       toast({
-        title: "Signup error",
-        description: "An unexpected error occurred. Please try signing in.",
+        title: "Signup failed",
+        description: "Could not create your account right now. Please try again.",
         variant: "destructive",
       });
     } finally {
