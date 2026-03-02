@@ -74,11 +74,25 @@ const EmployeeLogin = () => {
       const { data, error } = await signUp(email, password, firstName, lastName, 'employee');
       
       if (error) {
-        // Handle timeout errors gracefully - signup likely succeeded
+        // Handle timeout errors gracefully - signup likely succeeded, try signing in
         if (error.message?.includes('timeout') || error.status === 504 || error.message === '{}' || !error.message) {
+          // Try to sign in since the account was likely created
+          const { data: signInData, error: signInError } = await signIn(email, password);
+          if (signInData?.user && !signInError) {
+            const role = await getUserRole(signInData.user.id);
+            if (role === 'employee') {
+              toast({ title: "Account created", description: "Welcome!" });
+              navigate("/employee/dashboard");
+              return;
+            } else if (role === 'admin') {
+              toast({ title: "Login successful", description: "Welcome back, Administrator!" });
+              navigate("/admin/dashboard");
+              return;
+            }
+          }
           toast({
             title: "Account may have been created",
-            description: "The request timed out, but your account was likely created. Please try signing in, or check your email for verification.",
+            description: "Please try signing in with your credentials.",
           });
           return;
         }
@@ -90,15 +104,37 @@ const EmployeeLogin = () => {
         return;
       }
 
-      toast({
-        title: "Account created",
-        description: "Please check your email to verify your account, then sign in.",
-      });
+      // If signup returned a session, the user is already logged in
+      if (data?.session) {
+        const role = await getUserRole(data.user?.id);
+        if (role === 'employee') {
+          toast({ title: "Account created", description: "Welcome!" });
+          navigate("/employee/dashboard");
+        } else if (role === 'admin') {
+          toast({ title: "Account created", description: "Welcome!" });
+          navigate("/admin/dashboard");
+        } else {
+          // Role might not be assigned yet due to trigger timing, try after a brief delay
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          const retryRole = await getUserRole(data.user?.id);
+          if (retryRole === 'employee') {
+            toast({ title: "Account created", description: "Welcome!" });
+            navigate("/employee/dashboard");
+          } else {
+            toast({ title: "Account created", description: "Please sign in to continue." });
+          }
+        }
+      } else {
+        toast({
+          title: "Account created",
+          description: "Please sign in with your credentials.",
+        });
+      }
     } catch (error: any) {
-      // Network timeout or other fetch errors
       toast({
-        title: "Account may have been created",
-        description: "The request timed out. Please try signing in, or check your email for a verification link.",
+        title: "Signup error",
+        description: "An unexpected error occurred. Please try signing in.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
