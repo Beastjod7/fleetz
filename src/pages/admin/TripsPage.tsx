@@ -149,55 +149,35 @@ const TripsPage = () => {
       return;
     }
 
-    // Prepare data for export
-    const exportData = trips.map(trip => ({
-      'Trip ID': trip.id,
-      'Employee Name': getEmployeeName(trip.assigned_employee),
-      'Employee Email': trip.assigned_employee?.email || 'Unassigned',
-      'Route': trip.route?.name || 'No route',
-      'Vehicle': trip.vehicle ? `${trip.vehicle.make} ${trip.vehicle.model}` : 'No vehicle',
-      'License Plate': trip.vehicle?.license_plate || 'N/A',
-      'Status': trip.status.replace('_', ' ').toUpperCase(),
-      'Scheduled Start': new Date(trip.scheduled_start_time).toLocaleString(),
-      'Scheduled End': new Date(trip.scheduled_end_time).toLocaleString(),
-      'Actual Start': trip.actual_start_time ? new Date(trip.actual_start_time).toLocaleString() : 'N/A',
-      'Actual End': trip.actual_end_time ? new Date(trip.actual_end_time).toLocaleString() : 'N/A',
-      'Notes': trip.notes || 'N/A',
-      'Trip Log': trip.trip_log || 'N/A',
-    }));
+    const doc = new jsPDF({ orientation: 'landscape' });
+    doc.setFontSize(16);
+    doc.text('Fleet Trip Report', 14, 15);
+    doc.setFontSize(10);
+    doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 22);
 
-    // Create workbook and worksheet
-    const ws = XLSX.utils.json_to_sheet(exportData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Trip Reports');
+    const tableData = trips.map(trip => [
+      trip.id.slice(0, 8),
+      getEmployeeName(trip.assigned_employee),
+      trip.route?.name || 'No route',
+      trip.vehicle ? `${trip.vehicle.make} ${trip.vehicle.model}` : 'No vehicle',
+      trip.vehicle?.license_plate || 'N/A',
+      trip.status.replace('_', ' ').toUpperCase(),
+      new Date(trip.scheduled_start_time).toLocaleString(),
+      new Date(trip.scheduled_end_time).toLocaleString(),
+      trip.actual_start_time ? new Date(trip.actual_start_time).toLocaleString() : 'N/A',
+      trip.actual_end_time ? new Date(trip.actual_end_time).toLocaleString() : 'N/A',
+    ]);
 
-    // Auto-size columns
-    const maxWidth = 50;
-    const colWidths = Object.keys(exportData[0] || {}).map(key => ({
-      wch: Math.min(
-        Math.max(
-          key.length,
-          ...exportData.map(row => String(row[key as keyof typeof row]).length)
-        ),
-        maxWidth
-      )
-    }));
-    ws['!cols'] = colWidths;
+    autoTable(doc, {
+      startY: 28,
+      head: [['Trip ID', 'Employee', 'Route', 'Vehicle', 'Plate', 'Status', 'Sched. Start', 'Sched. End', 'Actual Start', 'Actual End']],
+      body: tableData,
+      styles: { fontSize: 7 },
+      headStyles: { fillColor: [41, 128, 185] },
+    });
 
-    // Generate filename with current date
-    const fileName = `trip_reports_${new Date().toISOString().split('T')[0]}.xlsx`;
-
-    // Export file using Blob to avoid call stack issues on Vercel
-    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([wbout], { type: 'application/octet-stream' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const fileName = `trip_reports_${new Date().toISOString().split('T')[0]}.pdf`;
+    doc.save(fileName);
 
     toast({
       title: "Success",
