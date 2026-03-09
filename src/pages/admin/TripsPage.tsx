@@ -186,8 +186,17 @@ const TripsPage = () => {
     // Generate filename with current date
     const fileName = `trip_reports_${new Date().toISOString().split('T')[0]}.xlsx`;
 
-    // Export file
-    XLSX.writeFile(wb, fileName);
+    // Export file using Blob to avoid call stack issues on Vercel
+    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([wbout], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 
     toast({
       title: "Success",
