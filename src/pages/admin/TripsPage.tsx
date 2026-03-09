@@ -177,7 +177,18 @@ const TripsPage = () => {
     });
 
     const fileName = `trip_reports_${new Date().toISOString().split('T')[0]}.pdf`;
-    doc.save(fileName);
+
+    // Use Blob-based download for Android WebView/PWA compatibility
+    const pdfBlob = doc.output('blob');
+    const blobUrl = URL.createObjectURL(pdfBlob);
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.download = fileName;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
 
     toast({
       title: "Success",
