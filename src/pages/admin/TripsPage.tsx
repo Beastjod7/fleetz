@@ -196,8 +196,8 @@ const TripsPage = () => {
           <h1 className="text-base md:text-xl font-semibold truncate">Trips</h1>
           <div className="ml-auto flex items-center gap-1.5 md:space-x-4 shrink-0">
             <Button variant="outline" size="sm" onClick={exportToExcel} className="h-8 px-2 md:px-3">
-              <FileSpreadsheet className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">Export</span>
+<FileSpreadsheet className="h-4 w-4 md:mr-2" />
+              <span className="hidden md:inline">Export PDF</span>
             </Button>
             <Button size="sm" onClick={() => navigate("/admin/create-trip")} className="h-8 px-2 md:px-3">
               <Plus className="h-4 w-4 md:mr-2" />
